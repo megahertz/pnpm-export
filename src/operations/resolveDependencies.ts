@@ -1,13 +1,13 @@
-import type { App } from '../core/App';
-import { UserError } from '../core/errors';
-import { ExportedPackages } from '../core/ExportedPackages';
-import type { WorkspacePackage } from '../core/WorkspacePackage';
-import type { DependencyMap } from '../types';
+import type { App } from '../core/App.ts';
+import { UserError } from '../core/errors.ts';
+import { ExportedPackages } from '../core/ExportedPackages.ts';
+import type { WorkspacePackage } from '../core/WorkspacePackage.ts';
+import type { DependencyMap } from '../types.ts';
 import {
   DEP_FIELDS,
   isWorkspaceSpecifier,
   shouldFollowField,
-} from '../utils/specifiers';
+} from '../utils/specifiers.ts';
 
 export async function resolveDependencies(app: App): Promise<void> {
   const workspace = app.requireWorkspace();

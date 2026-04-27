@@ -1,4 +1,4 @@
-import type { Config } from './core/Config';
+import type { Config } from './core/Config.ts';
 
 export type DependencyMap = Record<string, string>;
 

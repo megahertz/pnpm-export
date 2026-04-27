@@ -1,7 +1,7 @@
 import path from 'node:path';
-import type { WorkspaceYaml } from '../types';
-import { UserError } from './errors';
-import type { WorkspacePackage } from './WorkspacePackage';
+import type { WorkspaceYaml } from '../types.ts';
+import { UserError } from './errors.ts';
+import type { WorkspacePackage } from './WorkspacePackage.ts';
 
 export class Workspace {
   readonly root: string;

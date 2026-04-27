@@ -1,10 +1,10 @@
-import type { Dependencies, Logger } from '../types';
-import type { Config } from './Config';
-import { InternalError } from './errors';
-import type { ExportedPackages } from './ExportedPackages';
-import type { PackageJson } from './PackageJson';
-import type { Workspace } from './Workspace';
-import type { WorkspacePackage } from './WorkspacePackage';
+import type { Dependencies, Logger } from '../types.ts';
+import type { Config } from './Config.ts';
+import { InternalError } from './errors.ts';
+import type { ExportedPackages } from './ExportedPackages.ts';
+import type { PackageJson } from './PackageJson.ts';
+import type { Workspace } from './Workspace.ts';
+import type { WorkspacePackage } from './WorkspacePackage.ts';
 
 export class App {
   readonly config: Config;

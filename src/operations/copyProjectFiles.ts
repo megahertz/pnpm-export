@@ -1,8 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import type { App } from '../core/App';
-import { UserError } from '../core/errors';
-import type { WorkspacePackage } from '../core/WorkspacePackage';
+import type { App } from '../core/App.ts';
+import { UserError } from '../core/errors.ts';
+import type { WorkspacePackage } from '../core/WorkspacePackage.ts';
 import {
   CLEAN_MARKER,
   cleanDirContents,
@@ -13,12 +13,12 @@ import {
   isMarkerOnlyDir,
   listDir,
   pathExists,
-} from '../utils/fs';
+} from '../utils/fs.ts';
 import {
   dirnameMatchesPattern,
   isSameOrInside,
   toPosixPath,
-} from '../utils/paths';
+} from '../utils/paths.ts';
 
 export async function copyProjectFiles(app: App): Promise<void> {
   const workspace = app.requireWorkspace();

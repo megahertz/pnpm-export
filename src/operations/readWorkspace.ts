@@ -1,16 +1,16 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import type { App } from '../core/App';
-import { UserError } from '../core/errors';
-import { Workspace } from '../core/Workspace';
-import { WorkspacePackage } from '../core/WorkspacePackage';
-import type { PackageJsonData, RawWorkspaceYaml } from '../types';
-import { pathExists } from '../utils/fs';
-import { workspaceGlob } from '../utils/glob';
-import { readJson } from '../utils/json';
-import { isSameOrInside } from '../utils/paths';
-import { parseWorkspaceYaml } from '../utils/workspaceYaml';
-import { readYaml } from '../utils/yaml';
+import type { App } from '../core/App.ts';
+import { UserError } from '../core/errors.ts';
+import { Workspace } from '../core/Workspace.ts';
+import { WorkspacePackage } from '../core/WorkspacePackage.ts';
+import type { PackageJsonData, RawWorkspaceYaml } from '../types.ts';
+import { pathExists } from '../utils/fs.ts';
+import { workspaceGlob } from '../utils/glob.ts';
+import { readJson } from '../utils/json.ts';
+import { isSameOrInside } from '../utils/paths.ts';
+import { parseWorkspaceYaml } from '../utils/workspaceYaml.ts';
+import { readYaml } from '../utils/yaml.ts';
 
 export async function readWorkspace(app: App): Promise<void> {
   const workspaceRoot = await findWorkspaceRoot(app.config.cwd);

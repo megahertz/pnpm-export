@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseWorkspaceYaml } from '../../src/utils/workspaceYaml';
+import { parseWorkspaceYaml } from '../../src/utils/workspaceYaml.ts';
 
 describe('parseWorkspaceYaml', () => {
   it('normalizes supported fields', () => {

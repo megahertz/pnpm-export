@@ -1,14 +1,14 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { App } from '../../src/core/App';
-import { Config } from '../../src/core/Config';
-import { Workspace } from '../../src/core/Workspace';
-import { WorkspacePackage } from '../../src/core/WorkspacePackage';
-import { findWorkspaceRoot } from '../../src/operations/readWorkspace';
-import { resolveDependencies } from '../../src/operations/resolveDependencies';
-import type { Dependencies, Logger } from '../../src/types';
-import { tempDir } from '../helpers';
+import { App } from '../../src/core/App.ts';
+import { Config } from '../../src/core/Config.ts';
+import { Workspace } from '../../src/core/Workspace.ts';
+import { WorkspacePackage } from '../../src/core/WorkspacePackage.ts';
+import { findWorkspaceRoot } from '../../src/operations/readWorkspace.ts';
+import { resolveDependencies } from '../../src/operations/resolveDependencies.ts';
+import type { Dependencies, Logger } from '../../src/types.ts';
+import { tempDir } from '../helpers.ts';
 
 describe('resolveDependencies', () => {
   it('walks transitive workspace deps and handles cycles', async () => {

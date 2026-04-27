@@ -3,13 +3,37 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { copyFixture, tempDir } from '../helpers';
+import { copyFixture, tempDir } from '../helpers.ts';
 
 const execFileAsync = promisify(execFile);
 
 describe('cli', () => {
   beforeAll(async () => {
     await execFileAsync('pnpm', ['run', 'build']);
+  });
+
+  it('prints full help and exits with an error when required args are missing', async () => {
+    const commandError = await execFileAsync('node', ['dist/cli.js']).then(
+      () => undefined,
+      (caught: unknown) => caught,
+    );
+
+    expect(commandError).toMatchObject({
+      code: 1,
+      stdout: '',
+      stderr: expect.stringContaining(
+        "error: required option '-o, --output <dir>' not specified",
+      ),
+    });
+    expect(commandError).toMatchObject({
+      stderr: expect.stringContaining('Usage: pnpm-export [options]'),
+    });
+    expect(commandError).toMatchObject({
+      stderr: expect.stringContaining('-o, --output <dir>'),
+    });
+    expect(commandError).toMatchObject({
+      stderr: expect.stringContaining('output directory'),
+    });
   });
 
   it('prints a dry-run tree and writes nothing', async () => {

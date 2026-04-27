@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { ConfigOptions, PatchDependenciesMode } from '../types';
-import { UserError } from './errors';
+import type { ConfigOptions, PatchDependenciesMode } from '../types.ts';
+import { UserError } from './errors.ts';
 
 const PATCH_MODES = new Set<PatchDependenciesMode>([
   'ignore',

@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { makePackageFilter } from './ignoreFile';
+import { makePackageFilter } from './ignoreFile.ts';
 
 export const CLEAN_MARKER = '.pnpm-export-cleaned';
 

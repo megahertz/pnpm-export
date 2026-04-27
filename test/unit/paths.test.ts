@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mangleDirname, relFile } from '../../src/utils/paths';
+import { mangleDirname, relFile } from '../../src/utils/paths.ts';
 
 describe('path helpers', () => {
   it('mangles scoped package names', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import * as api from '../../src/index';
+import * as api from '../../src/index.ts';
 
 describe('public API contract', () => {
   it('exports the documented classes, operations, wiring, errors, and helper API', () => {

@@ -1,6 +1,6 @@
 import path from 'node:path';
-import { relFile } from '../utils/paths';
-import { WorkspacePackage } from './WorkspacePackage';
+import { relFile } from '../utils/paths.ts';
+import { WorkspacePackage } from './WorkspacePackage.ts';
 
 export class ExportedPackages {
   readonly root: WorkspacePackage;

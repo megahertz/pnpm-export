@@ -1,6 +1,6 @@
-import type { Dependencies } from '../types';
-import { ConsoleLogger } from '../utils/log';
-import type { Config } from './Config';
+import type { Dependencies } from '../types.ts';
+import { ConsoleLogger } from '../utils/log.ts';
+import type { Config } from './Config.ts';
 
 export function makeDependencies({ config }: { config: Config }): Dependencies {
   return {

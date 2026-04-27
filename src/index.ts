@@ -1,27 +1,30 @@
-export { Config } from './core/Config';
-export { App } from './core/App';
-export { Workspace } from './core/Workspace';
-export { WorkspacePackage } from './core/WorkspacePackage';
-export { ExportedPackages } from './core/ExportedPackages';
-export { PackageJson } from './core/PackageJson';
+export { Config } from './core/Config.ts';
+export { App } from './core/App.ts';
+export { Workspace } from './core/Workspace.ts';
+export { WorkspacePackage } from './core/WorkspacePackage.ts';
+export { ExportedPackages } from './core/ExportedPackages.ts';
+export { PackageJson } from './core/PackageJson.ts';
 
-export { readWorkspace, findWorkspaceRoot } from './operations/readWorkspace';
-export { resolveDependencies } from './operations/resolveDependencies';
-export { copyProjectFiles } from './operations/copyProjectFiles';
-export { modifyPackageJson } from './operations/modifyPackageJson';
-export { makePackageLockFile } from './operations/makePackageLockFile';
+export {
+  readWorkspace,
+  findWorkspaceRoot,
+} from './operations/readWorkspace.ts';
+export { resolveDependencies } from './operations/resolveDependencies.ts';
+export { copyProjectFiles } from './operations/copyProjectFiles.ts';
+export { modifyPackageJson } from './operations/modifyPackageJson.ts';
+export { makePackageLockFile } from './operations/makePackageLockFile.ts';
 
-export { makeDependencies } from './core/makeDependencies';
-export { UserError, InternalError } from './core/errors';
-export { exportPackage } from './exportPackage';
-export { parseWorkspaceYaml } from './utils/workspaceYaml';
+export { makeDependencies } from './core/makeDependencies.ts';
+export { UserError, InternalError } from './core/errors.ts';
+export { exportPackage } from './exportPackage.ts';
+export { parseWorkspaceYaml } from './utils/workspaceYaml.ts';
 export {
   isCatalogSpecifier,
   isWorkspaceSpecifier,
   resolveSpecifier,
   workspaceVersionSpecifier,
-} from './utils/specifiers';
-export { mangleDirname, relFile } from './utils/paths';
+} from './utils/specifiers.ts';
+export { mangleDirname, relFile } from './utils/paths.ts';
 
 export type {
   ConfigOptions,
@@ -31,4 +34,4 @@ export type {
   PackageJsonData,
   PnpmLock,
   WorkspaceYaml,
-} from './types';
+} from './types.ts';

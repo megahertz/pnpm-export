@@ -1,5 +1,5 @@
-import { UserError } from '../core/errors';
-import type { RawWorkspaceYaml, WorkspaceYaml } from '../types';
+import { UserError } from '../core/errors.ts';
+import type { RawWorkspaceYaml, WorkspaceYaml } from '../types.ts';
 
 export function parseWorkspaceYaml(
   raw: RawWorkspaceYaml | undefined,

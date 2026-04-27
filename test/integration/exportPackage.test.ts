@@ -1,9 +1,9 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
-import { exportPackage } from '../../src/exportPackage';
-import type { PackageJsonData } from '../../src/types';
-import { copyFixture, listFiles, readJson, tempDir } from '../helpers';
+import { exportPackage } from '../../src/exportPackage.ts';
+import type { PackageJsonData } from '../../src/types.ts';
+import { copyFixture, listFiles, readJson, tempDir } from '../helpers.ts';
 
 describe('exportPackage integration', () => {
   it('exports the basic monorepo closure and rewrites manifests', async () => {

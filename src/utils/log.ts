@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import type { Logger } from '../types';
+import type { Logger } from '../types.ts';
 
 export class ConsoleLogger implements Logger {
   #warningCount = 0;

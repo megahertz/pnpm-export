@@ -1,5 +1,11 @@
 {
   "extends": "@megahertz/oxconfig/tsconfig",
-  "compilerOptions": {},
-  "include": ["src", "test"]
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "declaration": true,
+    "outDir": "dist",
+    "rewriteRelativeImportExtensions": true,
+    "rootDir": "src"
+  },
+  "include": ["src"]
 }

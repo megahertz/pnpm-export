@@ -1,18 +1,17 @@
 #!/usr/bin/env node
 
 import { Command, InvalidArgumentError } from 'commander';
-import fs from 'node:fs';
 import { createRequire } from 'node:module';
-import { App } from './core/App';
-import { Config } from './core/Config';
-import { InternalError, UserError } from './core/errors';
-import { makeDependencies } from './core/makeDependencies';
-import { copyProjectFiles } from './operations/copyProjectFiles';
-import { makePackageLockFile } from './operations/makePackageLockFile';
-import { modifyPackageJson } from './operations/modifyPackageJson';
-import { readWorkspace } from './operations/readWorkspace';
-import { resolveDependencies } from './operations/resolveDependencies';
-import type { PatchDependenciesMode } from './types';
+import { App } from './core/App.ts';
+import { Config } from './core/Config.ts';
+import { UserError } from './core/errors.ts';
+import { makeDependencies } from './core/makeDependencies.ts';
+import { copyProjectFiles } from './operations/copyProjectFiles.ts';
+import { makePackageLockFile } from './operations/makePackageLockFile.ts';
+import { modifyPackageJson } from './operations/modifyPackageJson.ts';
+import { readWorkspace } from './operations/readWorkspace.ts';
+import { resolveDependencies } from './operations/resolveDependencies.ts';
+import type { PatchDependenciesMode } from './types.ts';
 
 const require = createRequire(import.meta.url);
 const packageJson = require('../package.json') as { version: string };
@@ -21,6 +20,7 @@ const program = new Command()
   .name('pnpm-export')
   .description('Export one package from a pnpm workspace for npm install.')
   .version(packageJson.version)
+  .showHelpAfterError()
   .option('-C, --cwd <dir>', 'source package directory')
   .requiredOption('-o, --output <dir>', 'output directory')
   .option(
@@ -82,20 +82,12 @@ try {
   await makePackageLockFile(app);
 } catch (error) {
   if (error instanceof UserError) {
-    writeError(`error: ${error.message}`);
+    console.error(`error: ${error.message}`);
     process.exitCode = 1;
-  } else if (error instanceof InternalError) {
-    writeError(error.stack ?? error.message);
-    writeError('pnpm-export hit an internal error; please file an issue.');
-    process.exitCode = 2;
   } else {
     const err = error as Error;
-    writeError(err.stack ?? String(error));
-    writeError('pnpm-export hit an internal error; please file an issue.');
+    console.error(err.stack ?? String(error));
+    console.error('pnpm-export hit an internal error; please file an issue.');
     process.exitCode = 2;
   }
-}
-
-function writeError(message: string): void {
-  fs.writeSync(process.stderr.fd, `${message}\n`);
 }

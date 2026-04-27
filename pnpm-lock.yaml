@@ -22,8 +22,8 @@ importers:
         version: 2.8.3
     devDependencies:
       '@megahertz/oxconfig':
-        specifier: ^0.0.4
-        version: 0.0.4(eslint@10.2.1)(typescript@6.0.3)
+        specifier: ^1.0.0
+        version: 1.0.0(eslint@10.2.1)(typescript@6.0.3)
       '@types/node':
         specifier: ^24.10.1
         version: 24.12.2
@@ -138,8 +138,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@megahertz/oxconfig@0.0.4':
-    resolution: {integrity: sha512-CEUUUtXuuP1lbmSIHX+jXyAGMY90mQlRcHxmXqhSkwepWP6rwD+pYPEKvxSiGsBB3cWIgL3QAqAdWx34SCY2QQ==}
+  '@megahertz/oxconfig@1.0.0':
+    resolution: {integrity: sha512-eqxwZIdNEyKgKVYE1DWj2x6rH3/UPfW9Jy/Bpp6v3rev8R7glb59EawSsWg5tjfOIP+zUUlz8yWjxNLqhke55Q==}
 
   '@napi-rs/wasm-runtime@1.1.4':
     resolution: {integrity: sha512-3NQNNgA1YSlJb/kMH1ildASP9HW7/7kYnRI2szWJaofaS1hWmbGI4H+d3+22aGzXXN9IJ+n+GiFVcGipJP18ow==}
@@ -1527,7 +1527,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@megahertz/oxconfig@0.0.4(eslint@10.2.1)(typescript@6.0.3)':
+  '@megahertz/oxconfig@1.0.0(eslint@10.2.1)(typescript@6.0.3)':
     dependencies:
       eslint-plugin-perfectionist: 5.9.0(eslint@10.2.1)(typescript@6.0.3)
       globals: 17.5.0

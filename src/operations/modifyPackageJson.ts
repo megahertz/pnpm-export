@@ -1,11 +1,11 @@
 import path from 'node:path';
-import type { App } from '../core/App';
+import type { App } from '../core/App.ts';
 import {
   PackageJson,
   collectPatches,
   copyPatchFiles,
-} from '../core/PackageJson';
-import { writeJson } from '../utils/json';
+} from '../core/PackageJson.ts';
+import { writeJson } from '../utils/json.ts';
 
 export async function modifyPackageJson(app: App): Promise<void> {
   const workspace = app.requireWorkspace();

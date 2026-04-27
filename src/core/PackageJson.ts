@@ -1,17 +1,22 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import type { DepKind, DependencyMap, Logger, PackageJsonData } from '../types';
+import type {
+  DepKind,
+  DependencyMap,
+  Logger,
+  PackageJsonData,
+} from '../types.ts';
 import {
   DEP_FIELDS,
   isWorkspaceSpecifier,
   resolveSpecifier,
   workspaceVersionSpecifier,
-} from '../utils/specifiers';
-import type { Config } from './Config';
-import { UserError } from './errors';
-import type { ExportedPackages } from './ExportedPackages';
-import type { Workspace } from './Workspace';
-import type { WorkspacePackage } from './WorkspacePackage';
+} from '../utils/specifiers.ts';
+import type { Config } from './Config.ts';
+import { UserError } from './errors.ts';
+import type { ExportedPackages } from './ExportedPackages.ts';
+import type { Workspace } from './Workspace.ts';
+import type { WorkspacePackage } from './WorkspacePackage.ts';
 
 export class PackageJson {
   readonly pkg: WorkspacePackage;

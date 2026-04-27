@@ -1,7 +1,7 @@
 import ignore from 'ignore';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { toPosixPath } from './paths';
+import { toPosixPath } from './paths.ts';
 
 const DEFAULT_DENYLIST = [
   'node_modules/',

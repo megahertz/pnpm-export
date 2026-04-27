@@ -1,6 +1,6 @@
-import type { Workspace } from '../core/Workspace';
-import type { WorkspacePackage } from '../core/WorkspacePackage';
-import type { DepKind } from '../types';
+import type { Workspace } from '../core/Workspace.ts';
+import type { WorkspacePackage } from '../core/WorkspacePackage.ts';
+import type { DepKind } from '../types.ts';
 
 export const DEP_FIELDS = [
   'dependencies',

@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { Workspace } from '../../src/core/Workspace';
-import { WorkspacePackage } from '../../src/core/WorkspacePackage';
+import { Workspace } from '../../src/core/Workspace.ts';
+import { WorkspacePackage } from '../../src/core/WorkspacePackage.ts';
 import {
   resolveSpecifier,
   workspaceVersionSpecifier,
-} from '../../src/utils/specifiers';
+} from '../../src/utils/specifiers.ts';
 
 describe('specifier helpers', () => {
   it('resolves catalog refs', () => {

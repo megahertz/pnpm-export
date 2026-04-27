@@ -4,7 +4,6 @@ on: push
 
 jobs:
   main:
-
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
