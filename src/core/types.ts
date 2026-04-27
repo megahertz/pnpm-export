@@ -1,8 +1,18 @@
-import type { Config } from './core/Config.ts';
+import type { Config } from './Config.ts';
 
-export type DependencyMap = Record<string, string>;
+export interface DependencyMap {
+  [dependencyName: string]: string;
+}
 
-export type PackageJsonData = {
+export interface PackageJsonPnpmData {
+  overrides?: DependencyMap;
+  patchedDependencies?: DependencyMap;
+  catalog?: unknown;
+  catalogs?: unknown;
+  [key: string]: unknown;
+}
+
+export interface PackageJsonData {
   name?: string;
   version?: string;
   private?: boolean;
@@ -22,34 +32,28 @@ export type PackageJsonData = {
   engines?: Record<string, string>;
   workspaces?: unknown;
   packageManager?: string;
-  pnpm?: {
-    overrides?: Record<string, string>;
-    patchedDependencies?: Record<string, string>;
-    catalog?: unknown;
-    catalogs?: unknown;
-    [key: string]: unknown;
-  };
+  pnpm?: PackageJsonPnpmData;
   overrides?: Record<string, string>;
   publishConfig?: Record<string, unknown>;
   [key: string]: unknown;
-};
+}
 
-export type WorkspaceYaml = {
+export interface WorkspaceYaml {
   packages: string[];
   catalog: Record<string, string>;
   catalogs: Record<string, Record<string, string>>;
   overrides: Record<string, string>;
   patchedDependencies: Record<string, string>;
-};
+}
 
-export type RawWorkspaceYaml = {
+export interface RawWorkspaceYaml {
   packages?: unknown;
   catalog?: unknown;
   catalogs?: unknown;
   overrides?: unknown;
   patchedDependencies?: unknown;
   [key: string]: unknown;
-};
+}
 
 export type PatchDependenciesMode = 'ignore' | 'warning' | 'try-replace';
 
@@ -59,7 +63,7 @@ export type DepKind =
   | 'peerDependencies'
   | 'optionalDependencies';
 
-export type ConfigOptions = {
+export interface ConfigOptions {
   cwd?: string;
   output?: string;
   devDependencies?: boolean;
@@ -70,19 +74,21 @@ export type ConfigOptions = {
   dryRun?: boolean;
   verbose?: boolean;
   patchDependencies?: PatchDependenciesMode;
-};
+}
 
-export type Logger = {
+export interface Logger {
   readonly warningCount?: number;
   info(message: string): void;
   warn(message: string): void;
   error(message: string): void;
   debug(message: string): void;
-};
+}
 
-export type Dependencies = {
+export interface Dependencies {
   config: Config;
   logger: Logger;
-};
+}
 
-export type PnpmLock = Record<string, unknown>;
+export interface PnpmLock {
+  [key: string]: unknown;
+}

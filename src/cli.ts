@@ -6,12 +6,8 @@ import { App } from './core/App.ts';
 import { Config } from './core/Config.ts';
 import { UserError } from './core/errors.ts';
 import { makeDependencies } from './core/makeDependencies.ts';
-import { copyProjectFiles } from './operations/copyProjectFiles.ts';
-import { makePackageLockFile } from './operations/makePackageLockFile.ts';
-import { modifyPackageJson } from './operations/modifyPackageJson.ts';
-import { readWorkspace } from './operations/readWorkspace.ts';
-import { resolveDependencies } from './operations/resolveDependencies.ts';
-import type { PatchDependenciesMode } from './types.ts';
+import type { PatchDependenciesMode } from './core/types.ts';
+import { pnpmExport } from './pnpmExport.ts';
 
 const require = createRequire(import.meta.url);
 const packageJson = require('../package.json') as { version: string };
@@ -75,11 +71,7 @@ try {
   const deps = makeDependencies({ config });
   const app = new App({ deps });
 
-  await readWorkspace(app);
-  await resolveDependencies(app);
-  await copyProjectFiles(app);
-  await modifyPackageJson(app);
-  await makePackageLockFile(app);
+  await pnpmExport(app);
 } catch (error) {
   if (error instanceof UserError) {
     console.error(`error: ${error.message}`);

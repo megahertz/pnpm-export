@@ -1,8 +1,8 @@
-import type { Dependencies, Logger } from '../types.ts';
 import type { Config } from './Config.ts';
 import { InternalError } from './errors.ts';
 import type { ExportedPackages } from './ExportedPackages.ts';
 import type { PackageJson } from './PackageJson.ts';
+import type { Dependencies, Logger } from './types.ts';
 import type { Workspace } from './Workspace.ts';
 import type { WorkspacePackage } from './WorkspacePackage.ts';
 

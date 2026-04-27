@@ -3,11 +3,11 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { App } from '../../src/core/App.ts';
 import { Config } from '../../src/core/Config.ts';
+import type { Dependencies, Logger } from '../../src/core/types.ts';
 import { Workspace } from '../../src/core/Workspace.ts';
 import { WorkspacePackage } from '../../src/core/WorkspacePackage.ts';
 import { findWorkspaceRoot } from '../../src/operations/readWorkspace.ts';
 import { resolveDependencies } from '../../src/operations/resolveDependencies.ts';
-import type { Dependencies, Logger } from '../../src/types.ts';
 import { tempDir } from '../helpers.ts';
 
 describe('resolveDependencies', () => {

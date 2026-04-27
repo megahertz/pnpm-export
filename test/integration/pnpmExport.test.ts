@@ -1,16 +1,16 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
-import { exportPackage } from '../../src/exportPackage.ts';
-import type { PackageJsonData } from '../../src/types.ts';
+import { App, Config, makeDependencies, pnpmExport } from '../../src/index.ts';
+import type { ConfigOptions, PackageJsonData } from '../../src/index.ts';
 import { copyFixture, listFiles, readJson, tempDir } from '../helpers.ts';
 
-describe('exportPackage integration', () => {
+describe('pnpmExport integration', () => {
   it('exports the basic monorepo closure and rewrites manifests', async () => {
     const repo = await copyFixture('basic-monorepo');
     const output = await freshOutput();
 
-    await exportPackage({
+    await runPnpmExport({
       cwd: path.join(repo, 'packages/api'),
       output,
     });
@@ -45,7 +45,7 @@ describe('exportPackage integration', () => {
     const repo = await copyFixture('scoped');
     const output = await freshOutput();
 
-    await exportPackage({
+    await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
     });
@@ -66,7 +66,7 @@ describe('exportPackage integration', () => {
     const output = await freshOutput();
     const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await exportPackage({
+    await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
     });
@@ -86,7 +86,7 @@ describe('exportPackage integration', () => {
   it('follows peer and optional workspace dependency edges by default', async () => {
     const peerRepo = await copyFixture('with-peer-deps');
     const peerOutput = await freshOutput();
-    await exportPackage({
+    await runPnpmExport({
       cwd: path.join(peerRepo, 'packages/app'),
       output: peerOutput,
     });
@@ -96,7 +96,7 @@ describe('exportPackage integration', () => {
 
     const optionalRepo = await copyFixture('with-optional-deps');
     const optionalOutput = await freshOutput();
-    await exportPackage({
+    await runPnpmExport({
       cwd: path.join(optionalRepo, 'packages/app'),
       output: optionalOutput,
     });
@@ -115,7 +115,7 @@ describe('exportPackage integration', () => {
     const repo = await copyFixture('private-vs-public');
     const output = await freshOutput();
 
-    await exportPackage({
+    await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
       peerDependencies: false,
@@ -134,7 +134,7 @@ describe('exportPackage integration', () => {
     const repo = await copyFixture('with-pnpmexportignore');
     const output = await freshOutput();
 
-    await exportPackage({
+    await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
     });
@@ -152,7 +152,7 @@ describe('exportPackage integration', () => {
     const output = await freshOutput();
     const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await exportPackage({
+    await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
     });
@@ -173,7 +173,7 @@ describe('exportPackage integration', () => {
     const output = await freshOutput();
     const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await exportPackage({
+    await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
     });
@@ -200,7 +200,7 @@ describe('exportPackage integration', () => {
     const warningOutput = await freshOutput();
     const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await exportPackage({
+    await runPnpmExport({
       cwd: path.join(warningRepo, 'packages/app'),
       output: warningOutput,
       patchDependencies: 'warning',
@@ -217,7 +217,7 @@ describe('exportPackage integration', () => {
 
     const ignoreRepo = await copyFixture('with-patches');
     const ignoreOutput = await freshOutput();
-    await exportPackage({
+    await runPnpmExport({
       cwd: path.join(ignoreRepo, 'packages/app'),
       output: ignoreOutput,
       patchDependencies: 'ignore',
@@ -233,7 +233,7 @@ describe('exportPackage integration', () => {
     const output = await freshOutput();
     const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await exportPackage({
+    await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
     });
@@ -246,7 +246,7 @@ describe('exportPackage integration', () => {
     const repo = await copyFixture('source-is-workspace-root');
     const output = await freshOutput();
 
-    await exportPackage({
+    await runPnpmExport({
       cwd: repo,
       output,
     });
@@ -264,13 +264,21 @@ describe('exportPackage integration', () => {
     const output = await freshOutput();
 
     await expect(
-      exportPackage({
+      runPnpmExport({
         cwd: path.join(repo, 'packages/self'),
         output,
       }),
     ).rejects.toThrow('lists itself as a workspace dependency');
   });
 });
+
+async function runPnpmExport(options: ConfigOptions): Promise<void> {
+  const config = new Config({ options });
+  const deps = makeDependencies({ config });
+  const app = new App({ deps });
+
+  await pnpmExport(app);
+}
 
 async function freshOutput(): Promise<string> {
   const output = await tempDir('pnpm-export-output-');

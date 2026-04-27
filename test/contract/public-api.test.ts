@@ -18,7 +18,7 @@ describe('public API contract', () => {
       'makeDependencies',
       'UserError',
       'InternalError',
-      'exportPackage',
+      'pnpmExport',
     ]) {
       expect(api).toHaveProperty(key);
     }

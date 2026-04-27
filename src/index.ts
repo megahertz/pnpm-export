@@ -16,7 +16,7 @@ export { makePackageLockFile } from './operations/makePackageLockFile.ts';
 
 export { makeDependencies } from './core/makeDependencies.ts';
 export { UserError, InternalError } from './core/errors.ts';
-export { exportPackage } from './exportPackage.ts';
+export { pnpmExport } from './pnpmExport.ts';
 export { parseWorkspaceYaml } from './utils/workspaceYaml.ts';
 export {
   isCatalogSpecifier,
@@ -34,4 +34,4 @@ export type {
   PackageJsonData,
   PnpmLock,
   WorkspaceYaml,
-} from './types.ts';
+} from './core/types.ts';

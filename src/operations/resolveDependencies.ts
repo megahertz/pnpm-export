@@ -1,8 +1,8 @@
 import type { App } from '../core/App.ts';
 import { UserError } from '../core/errors.ts';
 import { ExportedPackages } from '../core/ExportedPackages.ts';
+import type { DependencyMap } from '../core/types.ts';
 import type { WorkspacePackage } from '../core/WorkspacePackage.ts';
-import type { DependencyMap } from '../types.ts';
 import {
   DEP_FIELDS,
   isWorkspaceSpecifier,

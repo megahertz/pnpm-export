@@ -96,36 +96,19 @@ guarantees before 1.0; minor versions may include breaking changes.
 ## Programmatic API
 
 ```ts
-import { exportPackage } from 'pnpm-export';
+import { App, Config, makeDependencies, pnpmExport } from 'pnpm-export';
 
-await exportPackage({
-  cwd: 'packages/api',
-  output: '/tmp/api',
-  clean: true,
+const config = new Config({
+  options: {
+    cwd: 'packages/api',
+    output: '/tmp/api',
+    clean: true,
+  },
 });
-```
-
-For extension points, import the same classes and operations used by the CLI:
-
-```ts
-import {
-  App,
-  Config,
-  copyProjectFiles,
-  makeDependencies,
-  modifyPackageJson,
-  readWorkspace,
-  resolveDependencies,
-} from 'pnpm-export';
-
-const config = new Config({ options: { cwd, output } });
 const deps = makeDependencies({ config });
 const app = new App({ deps });
 
-await readWorkspace(app);
-await resolveDependencies(app);
-await copyProjectFiles(app);
-await modifyPackageJson(app);
+await pnpmExport(app);
 ```
 
 ## Contributing

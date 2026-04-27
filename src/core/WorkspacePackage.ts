@@ -1,5 +1,5 @@
-import type { PackageJsonData } from '../types.ts';
 import { mangleDirname } from '../utils/paths.ts';
+import type { PackageJsonData } from './types.ts';
 
 export class WorkspacePackage {
   readonly name: string;

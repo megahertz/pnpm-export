@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { Config } from '../../src/core/Config.ts';
 import { ExportedPackages } from '../../src/core/ExportedPackages.ts';
 import { PackageJson } from '../../src/core/PackageJson.ts';
+import type { Logger } from '../../src/core/types.ts';
 import { Workspace } from '../../src/core/Workspace.ts';
 import { WorkspacePackage } from '../../src/core/WorkspacePackage.ts';
-import type { Logger } from '../../src/types.ts';
 
 describe('PackageJson', () => {
   it('rewrites workspace and catalog deps without mutating the source manifest', () => {
