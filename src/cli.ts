@@ -1,0 +1,101 @@
+#!/usr/bin/env node
+
+import { Command, InvalidArgumentError } from 'commander';
+import fs from 'node:fs';
+import { createRequire } from 'node:module';
+import { App } from './core/App';
+import { Config } from './core/Config';
+import { InternalError, UserError } from './core/errors';
+import { makeDependencies } from './core/makeDependencies';
+import { copyProjectFiles } from './operations/copyProjectFiles';
+import { makePackageLockFile } from './operations/makePackageLockFile';
+import { modifyPackageJson } from './operations/modifyPackageJson';
+import { readWorkspace } from './operations/readWorkspace';
+import { resolveDependencies } from './operations/resolveDependencies';
+import type { PatchDependenciesMode } from './types';
+
+const require = createRequire(import.meta.url);
+const packageJson = require('../package.json') as { version: string };
+
+const program = new Command()
+  .name('pnpm-export')
+  .description('Export one package from a pnpm workspace for npm install.')
+  .version(packageJson.version)
+  .option('-C, --cwd <dir>', 'source package directory')
+  .requiredOption('-o, --output <dir>', 'output directory')
+  .option(
+    '-D, --dev-dependencies',
+    'include workspace dev deps in closure',
+    false,
+  )
+  .option(
+    '-P, --peer-dependencies',
+    'follow peerDependencies workspace edges',
+    true,
+  )
+  .option(
+    '--no-peer-dependencies',
+    'do not follow peerDependencies workspace edges',
+  )
+  .option(
+    '-O, --optional-dependencies',
+    'follow optionalDependencies workspace edges',
+    true,
+  )
+  .option(
+    '--no-optional-dependencies',
+    'do not follow optionalDependencies workspace edges',
+  )
+  .option(
+    '--patch-dependencies <mode>',
+    'patch dependency handling: ignore | warning | try-replace',
+    (value: string): PatchDependenciesMode => {
+      if (
+        value === 'ignore' ||
+        value === 'warning' ||
+        value === 'try-replace'
+      ) {
+        return value;
+      }
+      throw new InvalidArgumentError(
+        'expected ignore, warning, or try-replace',
+      );
+    },
+    'try-replace',
+  )
+  .option('--clean', 'wipe output directory contents before writing', false)
+  .option('--lockfile', 'reserved; not implemented in v1', false)
+  .option('--dry-run', 'print planned actions without writing', false)
+  .option('-v, --verbose', 'debug logging', false);
+
+program.parse();
+
+try {
+  const config = new Config({ options: program.opts() });
+  const deps = makeDependencies({ config });
+  const app = new App({ deps });
+
+  await readWorkspace(app);
+  await resolveDependencies(app);
+  await copyProjectFiles(app);
+  await modifyPackageJson(app);
+  await makePackageLockFile(app);
+} catch (error) {
+  if (error instanceof UserError) {
+    writeError(`error: ${error.message}`);
+    process.exitCode = 1;
+  } else if (error instanceof InternalError) {
+    writeError(error.stack ?? error.message);
+    writeError('pnpm-export hit an internal error; please file an issue.');
+    process.exitCode = 2;
+  } else {
+    const err = error as Error;
+    writeError(err.stack ?? String(error));
+    writeError('pnpm-export hit an internal error; please file an issue.');
+    process.exitCode = 2;
+  }
+}
+
+function writeError(message: string): void {
+  fs.writeSync(process.stderr.fd, `${message}\n`);
+}

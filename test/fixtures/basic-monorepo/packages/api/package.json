@@ -1,0 +1,12 @@
+{
+  "name": "api",
+  "private": true,
+  "dependencies": {
+    "zod": "catalog:",
+    "shared": "workspace:*"
+  },
+  "devDependencies": {
+    "dev-config": "workspace:*",
+    "eslint": "^9.0.0"
+  }
+}

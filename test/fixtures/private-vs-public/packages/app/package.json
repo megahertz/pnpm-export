@@ -1,0 +1,7 @@
+{
+  "name": "private-public-app",
+  "peerDependencies": {
+    "private-target": "workspace:*",
+    "public-target": "workspace:^"
+  }
+}

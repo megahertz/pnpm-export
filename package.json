@@ -1,0 +1,41 @@
+{
+  "name": "pnpm-export",
+  "version": "0.1.0",
+  "description": "Export one package from a pnpm workspace into an npm-installable directory.",
+  "type": "module",
+  "bin": {
+    "pnpm-export": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.33.1",
+  "scripts": {
+    "build": "tsdown src/index.ts src/cli.ts --format esm --no-config --out-dir dist --dts false && mv dist/index.mjs dist/index.js && mv dist/cli.mjs dist/cli.js && tsgo -p tsconfig.build.json",
+    "docs:flags": "node scripts/update-readme-flags.mjs",
+    "format": "oxfmt && oxlint --fix",
+    "start": "pnpm run build && node dist/cli.js",
+    "test": "vitest run",
+    "typecheck": "tsgo",
+    "lint": "oxfmt --check && oxlint",
+    "check": "pnpm typecheck && pnpm lint && pnpm test"
+  },
+  "dependencies": {
+    "commander": "^14.0.3",
+    "ignore": "^7.0.5",
+    "tinyglobby": "^0.2.15",
+    "yaml": "^2.8.2"
+  },
+  "devDependencies": {
+    "@megahertz/oxconfig": "^0.0.4",
+    "@types/node": "^24.10.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260427.1",
+    "oxfmt": "^0.46.0",
+    "oxlint": "^1.61.0",
+    "tsdown": "^0.21.10",
+    "vitest": "^4.0.13"
+  }
+}

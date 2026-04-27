@@ -1,0 +1,5 @@
+{
+  "extends": "@megahertz/oxconfig/tsconfig",
+  "compilerOptions": {},
+  "include": ["src", "test"]
+}

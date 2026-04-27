@@ -1,6 +1,6 @@
-I want to create a npm package pnpm-export
+I want to create an npm package named `pnpm-export`.
 
-Let's imagine we have the pnpm monorepo:
+Imagine we have the following pnpm monorepo:
 
 ```
 |-- packages
@@ -16,7 +16,7 @@ Let's imagine we have the pnpm monorepo:
 |-- pnpm-workspace.yaml
 ```
 
-package/api has the following package.json
+`packages/api` has the following `package.json`:
 
 ```
 {
@@ -27,16 +27,16 @@ package/api has the following package.json
     "shared": "workspace:*"
   },
   "devDependencies": {
-    "dev-config": "workspace:*",
+    "dev-config": "workspace:*"
   }
 }
 ```
 
-I want pnpm-export to work like that:
+I want `pnpm-export` to work like this:
 
 `pnpm-export -C packages/api --output /tmp/api`
 
-It creates the following structure:
+It should create the following structure:
 
 ```
 |-- packages
@@ -46,10 +46,10 @@ It creates the following structure:
 |-- package.json
 ```
 
-(v1 does not emit `package-lock.json`; consumer runs `npm install` in the
-output dir. Lockfile generation is a v2 goal — see Phase 8 of `plan.md`.)
+(v1 does not emit `package-lock.json`; the consumer runs `npm install` in the
+output directory. Lockfile generation is a v2 goal; see Phase 8 of `plan.md`.)
 
-and package.json becomes:
+The exported `package.json` should become:
 
 ```
 {
@@ -64,8 +64,13 @@ and package.json becomes:
 }
 ```
 
-devDependencies is empty because we didn't passed -D or --dev-dependencies flag, so workspace packages were just removed
-Also pay attention that lib packages is copied too since it's workspace dependencies of shared. package.json of shared should be updated to point to local packages as well
-package-lock.json should be made by getting information of pnpm-lock.json. But v1 skips it (see Phase 8 of `plan.md`).
+The `devDependencies` object is empty because we did not pass the `-D` or
+`--dev-dependencies` flag, so workspace dev dependencies were removed. Also note
+that `lib` is copied because it is a workspace dependency of `shared`. The
+`package.json` for `shared` should also be updated to point to local packages.
+`package-lock.json` should be generated from information in `pnpm-lock.yaml`,
+but v1 skips this (see Phase 8 of `plan.md`).
 
-So, this module is something like `pnpm pack` or `pnpm deploy` but better. So, it allows to export any package and do any things, like deploying to google app engine and so on
+This module is similar to `pnpm pack` or `pnpm deploy`, but more flexible. It
+allows any package to be exported for tasks such as deployment to Google App
+Engine.
