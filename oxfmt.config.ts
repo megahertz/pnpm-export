@@ -1,1 +1,6 @@
-export { default } from '@megahertz/oxconfig/oxfmt';
+import config from '@megahertz/oxconfig/oxfmt';
+
+export default {
+  ...config,
+  ignorePatterns: ['CLAUDE.md', 'GEMINI.md'], // Symlinks on Windows
+};
