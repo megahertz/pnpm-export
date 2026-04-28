@@ -15,163 +15,163 @@ Docker, Lambda, etc.
 
 ## Phase 1 — Project scaffolding
 
-- [ ] Initialize repo: `package.json` with `name: "pnpm-export"`,
+- [x] Initialize repo: `package.json` with `name: "pnpm-export"`,
       `type: "module"`, `bin: { "pnpm-export": "./dist/cli.js" }`
-- [ ] Add `engines.node` field (Node 20+)
-- [ ] Set up TypeScript (`tsconfig.json`, strict mode, ESM, target ES2022)
-- [ ] Set up bundler: `tsdown`
-- [ ] Runtime deps:
-  - [ ] `yaml` — parse `pnpm-workspace.yaml` and `pnpm-lock.yaml`
-  - [ ] `tinyglobby` — match workspace globs
-  - [ ] `commander` — CLI parsing
-  - [ ] `ignore` — parse `.pnpmexportignore`
-- [ ] Dev deps: `vitest`, `@types/node`, `tsgo`, `tsdown`, `oxlint`, `oxfmt`
-- [ ] Use `tsgo` for both `npm run typecheck` and any TS handling in build
-- [ ] Add `.gitignore`, `LICENSE` (MIT), placeholder `README.md`
-- [ ] Add npm scripts: `build`, `start`, `test`, `typecheck`, `lint`, `check`,
+- [x] Add `engines.node` field (Node 20+)
+- [x] Set up TypeScript (`tsconfig.json`, strict mode, ESM, target ES2022)
+- [x] Set up bundler: `tsdown`
+- [x] Runtime deps:
+  - [x] `yaml` — parse `pnpm-workspace.yaml` and `pnpm-lock.yaml`
+  - [x] `tinyglobby` — match workspace globs
+  - [x] `commander` — CLI parsing
+  - [x] `ignore` — parse `.pnpmexportignore`
+- [x] Dev deps: `vitest`, `@types/node`, `tsgo`, `tsdown`, `oxlint`, `oxfmt`
+- [x] Use `tsgo` for both `npm run typecheck` and any TS handling in build
+- [x] Add `.gitignore`, `LICENSE` (MIT), placeholder `README.md`
+- [x] Add npm scripts: `build`, `start`, `test`, `typecheck`, `lint`, `check`,
       `prepublishOnly` (build + test)
-- [ ] Wire up shebang `#!/usr/bin/env node` in CLI entry
+- [x] Wire up shebang `#!/usr/bin/env node` in CLI entry
 
 ## Phase 2 — CLI surface
 
-- [ ] Define flags:
-  - [ ] `-C, --cwd <dir>` — source package directory (default cwd; resolved to
+- [x] Define flags:
+  - [x] `-C, --cwd <dir>` — source package directory (default cwd; resolved to
         absolute against invocation cwd)
-  - [ ] `-o, --output <dir>` — output directory (required)
-  - [ ] `-D, --dev-dependencies` — include workspace dev deps in closure
+  - [x] `-o, --output <dir>` — output directory (required)
+  - [x] `-D, --dev-dependencies` — include workspace dev deps in closure
         (default: false). Non-workspace dev deps are always kept.
-  - [ ] `-P, --peer-dependencies` — follow `peerDependencies` workspace edges
+  - [x] `-P, --peer-dependencies` — follow `peerDependencies` workspace edges
         (default: true)
-  - [ ] `-O, --optional-dependencies` — follow `optionalDependencies` workspace
+  - [x] `-O, --optional-dependencies` — follow `optionalDependencies` workspace
         edges (default: true)
-  - [ ] `--patch-dependencies <mode>` — `ignore` | `warning` | `try-replace`
+  - [x] `--patch-dependencies <mode>` — `ignore` | `warning` | `try-replace`
         (default `try-replace`); see Phase 7
-  - [ ] `--clean` — wipe output dir contents before writing (default: false;
+  - [x] `--clean` — wipe output dir contents before writing (default: false;
         otherwise error if non-empty)
-  - [ ] `--no-lockfile` — skip generated `package-lock.json`
-  - [ ] `--dry-run` — print planned actions, write nothing; usable as a
+  - [x] `--no-lockfile` — skip generated `package-lock.json`
+  - [x] `--dry-run` — print planned actions, write nothing; usable as a
         pre-commit lint
-  - [ ] `-v, --verbose` — debug logging
-  - [ ] `--help`, `--version`
-- [ ] `--clean` semantics:
-  - [ ] Wipes the **contents** of the output dir, not the dir itself
-  - [ ] Refuses to clean a dir that doesn't look like a prior export (presence
+  - [x] `-v, --verbose` — debug logging
+  - [x] `--help`, `--version`
+- [x] `--clean` semantics:
+  - [x] Wipes the **contents** of the output dir, not the dir itself
+  - [x] Refuses to clean a dir that doesn't look like a prior export (presence
         of `.git/`, `node_modules/`, or any `package.json` we didn't write —
         alternatively, recognizable marker file). Concrete marker: drop a
         `.pnpm-export-cleaned` zero-byte file when we clean; on subsequent runs,
         `--clean` proceeds only if that marker is present OR the dir is empty.
-- [ ] `--dry-run` output:
-  - [ ] Tree-style listing of files that would be written, grouped by package
-  - [ ] Summary footer: _"Would copy N packages, rewrite N manifests, emit N
+- [x] `--dry-run` output:
+  - [x] Tree-style listing of files that would be written, grouped by package
+  - [x] Summary footer: _"Would copy N packages, rewrite N manifests, emit N
         warnings."_
-  - [ ] Exit 0 if export would succeed, 1 if it would fail (e.g., catalog miss,
+  - [x] Exit 0 if export would succeed, 1 if it would fail (e.g., catalog miss,
         missing required field)
-- [ ] Error message for non-empty output: _"Output directory `<output>` is
+- [x] Error message for non-empty output: _"Output directory `<output>` is
       non-empty. Re-run with `--clean` to wipe it, or pick a different output
       dir."_
-- [ ] Output dir validation:
-  - [ ] **Hard error** if output dir is inside source dir, equals source dir, or
+- [x] Output dir validation:
+  - [x] **Hard error** if output dir is inside source dir, equals source dir, or
         equals workspace root (recursive copy / corrupting input)
-  - [ ] **Hard error** if output dir is itself an existing workspace package
+  - [x] **Hard error** if output dir is itself an existing workspace package
         (would shadow it)
-  - [ ] **Warn** if output dir is not yet a package but its path matches a
+  - [x] **Warn** if output dir is not yet a package but its path matches a
         workspace glob (post-export, pnpm will treat it as one)
-  - [ ] **Allow** otherwise (including dirs inside the workspace root that don't
+  - [x] **Allow** otherwise (including dirs inside the workspace root that don't
         match any glob)
-- [ ] Exit codes: `0` success, `1` user error, `2` internal error
+- [x] Exit codes: `0` success, `1` user error, `2` internal error
 
 ## Phase 3 — Workspace discovery
 
-- [ ] `findWorkspaceRoot(startDir)` — walk up from **`config.cwd`** until
+- [x] `findWorkspaceRoot(startDir)` — walk up from **`config.cwd`** until
       `pnpm-workspace.yaml` is found
-- [ ] Source dir does **not** need to be inside any `packages` glob — it can be
+- [x] Source dir does **not** need to be inside any `packages` glob — it can be
       the workspace root, a tools dir, etc. The glob registry only governs which
       packages can be _targets_ of `workspace:` resolutions.
-- [ ] Edge cases (all hard errors, exit 1, with explicit messages):
-  - [ ] No `pnpm-workspace.yaml` found anywhere → _"No pnpm-workspace.yaml found
+- [x] Edge cases (all hard errors, exit 1, with explicit messages):
+  - [x] No `pnpm-workspace.yaml` found anywhere → _"No pnpm-workspace.yaml found
         in `<cwd>` or any parent. pnpm-export only supports pnpm workspaces. For
         a single-package project, use `npm pack` instead."_
-  - [ ] `<cwd>/package.json` missing → _"`<cwd>/package.json` not found. --cwd
+  - [x] `<cwd>/package.json` missing → _"`<cwd>/package.json` not found. --cwd
         must point to a directory containing a package.json."_
-  - [ ] Source `package.json` has no `name` field → _"Source package at `<cwd>`
+  - [x] Source `package.json` has no `name` field → _"Source package at `<cwd>`
         has no `name` field; pnpm-export requires a name."_
-  - [ ] Resolved source dir is outside the discovered workspace root → _"Source
+  - [x] Resolved source dir is outside the discovered workspace root → _"Source
         dir `<source>` is not inside workspace `<root>`."_
-  - [ ] Two workspace packages with the same name → _"Duplicate workspace
+  - [x] Two workspace packages with the same name → _"Duplicate workspace
         package name `<name>` at `<dir1>` and `<dir2>`."_
-- [ ] Parse `pnpm-workspace.yaml`:
-  - [ ] `packages: string[]` (glob patterns)
-  - [ ] `catalog: Record<string, string>` (default catalog)
-  - [ ] `catalogs: Record<string, Record<string, string>>` (named catalogs)
-  - [ ] `overrides`, `patchedDependencies` (handled per Phase 7)
-- [ ] Enumerate workspace packages via globs (skip `node_modules`)
-- [ ] For each match, read its `package.json` and build a registry:
+- [x] Parse `pnpm-workspace.yaml`:
+  - [x] `packages: string[]` (glob patterns)
+  - [x] `catalog: Record<string, string>` (default catalog)
+  - [x] `catalogs: Record<string, Record<string, string>>` (named catalogs)
+  - [x] `overrides`, `patchedDependencies` (handled per Phase 7)
+- [x] Enumerate workspace packages via globs (skip `node_modules`)
+- [x] For each match, read its `package.json` and build a registry:
   - `Map<packageName, { dir: absolutePath, manifest: PackageJsonData }>`
 
 ## Phase 4 — Dependency graph resolution
 
-- [ ] `resolveWorkspaceClosure(rootPkg, registry, flags)`:
-  - [ ] BFS/DFS over dep fields, uniformly recursive
-  - [ ] Edges followed:
-    - [ ] `dependencies` — always
-    - [ ] `peerDependencies` — when `flags.peerDependencies` (default true)
-    - [ ] `optionalDependencies` — when `flags.optionalDependencies` (default
+- [x] `resolveWorkspaceClosure(rootPkg, registry, flags)`:
+  - [x] BFS/DFS over dep fields, uniformly recursive
+  - [x] Edges followed:
+    - [x] `dependencies` — always
+    - [x] `peerDependencies` — when `flags.peerDependencies` (default true)
+    - [x] `optionalDependencies` — when `flags.optionalDependencies` (default
           true)
-    - [ ] `devDependencies` — when `flags.devDependencies` (default false);
+    - [x] `devDependencies` — when `flags.devDependencies` (default false);
           applies to root and transitive workspace packages alike
-  - [ ] A dep is a workspace dep iff its specifier starts with `workspace:` AND
+  - [x] A dep is a workspace dep iff its specifier starts with `workspace:` AND
         its name exists in the registry
-  - [ ] Track visited set to handle cycles
-  - [ ] Return: ordered list of workspace packages to copy (root excluded from
+  - [x] Track visited set to handle cycles
+  - [x] Return: ordered list of workspace packages to copy (root excluded from
         the "copied to output/packages/" set, but represented in
         `ExportedPackages.root`)
-- [ ] Edge cases:
-  - [ ] `workspace:^`, `workspace:~`, `workspace:1.2.3`, `workspace:*` — all
+- [x] Edge cases:
+  - [x] `workspace:^`, `workspace:~`, `workspace:1.2.3`, `workspace:*` — all
         treated as workspace refs
-  - [ ] Self-reference (a package lists itself as a workspace dep) → hard error
-  - [ ] Cycles between two packages in closure → both copied; their refs rewrite
+  - [x] Self-reference (a package lists itself as a workspace dep) → hard error
+  - [x] Cycles between two packages in closure → both copied; their refs rewrite
         to relative `file:` paths normally
 
 ## Phase 5 — Catalog & specifier resolution
 
-- [ ] `resolveSpecifier(specifier, depName, ctx)` returns a concrete
+- [x] `resolveSpecifier(specifier, depName, ctx)` returns a concrete
       npm-compatible specifier:
-  - [ ] `workspace:*` / `workspace:^` / `workspace:~` / `workspace:^X.Y.Z` /
+  - [x] `workspace:*` / `workspace:^` / `workspace:~` / `workspace:^X.Y.Z` /
         `workspace:~X.Y.Z` / `workspace:X.Y.Z` →
-    - [ ] If dep is in workspace closure → rewrite to `file:` relative path
-    - [ ] If dep is a workspace package but excluded (e.g., `-P` off): use the
+    - [x] If dep is in workspace closure → rewrite to `file:` relative path
+    - [x] If dep is a workspace package but excluded (e.g., `-P` off): use the
           `private:true` discriminator (Phase 7)
-  - [ ] `catalog:` → look up `depName` in default catalog
-  - [ ] `catalog:<name>` → look up `depName` in `catalogs[<name>]`
-  - [ ] Plain version range → pass through
-  - [ ] `npm:`, `git+`, `file:`, `link:`, `http(s):` — pass through unchanged
-- [ ] Catalog rules:
-  - [ ] Hard error on catalog miss (catalog name unknown OR dep not in catalog)
-  - [ ] Hard error if a catalog entry resolves to a `workspace:` value
+  - [x] `catalog:` → look up `depName` in default catalog
+  - [x] `catalog:<name>` → look up `depName` in `catalogs[<name>]`
+  - [x] Plain version range → pass through
+  - [x] `npm:`, `git+`, `file:`, `link:`, `http(s):` — pass through unchanged
+- [x] Catalog rules:
+  - [x] Hard error on catalog miss (catalog name unknown OR dep not in catalog)
+  - [x] Hard error if a catalog entry resolves to a `workspace:` value
         (degenerate)
-  - [ ] Hard error on catalog-of-catalog chains (`catalog:strict`'s entry is
+  - [x] Hard error on catalog-of-catalog chains (`catalog:strict`'s entry is
         itself `catalog:`)
-  - [ ] Catalog resolution applies to **every** rewritten manifest (root + every
+  - [x] Catalog resolution applies to **every** rewritten manifest (root + every
         copied workspace package)
-  - [ ] Warn-and-ignore per-package `pnpm.catalog` overrides (v1)
-  - [ ] Non-version catalog values (`git+`, `npm:`, etc.) pass through as-is
-  - [ ] Same dep with different catalog refs across closure → emit both
+  - [x] Warn-and-ignore per-package `pnpm.catalog` overrides (v1)
+  - [x] Non-version catalog values (`git+`, `npm:`, etc.) pass through as-is
+  - [x] Same dep with different catalog refs across closure → emit both
         literally; do not unify (v1)
-- [ ] Compute relative `file:` path using the **mangled directory name**:
-  - [ ] Root manifest → `file:./packages/<dirname>`
-  - [ ] Nested workspace pkg in `output/packages/foo` referencing `bar` →
+- [x] Compute relative `file:` path using the **mangled directory name**:
+  - [x] Root manifest → `file:./packages/<dirname>`
+  - [x] Nested workspace pkg in `output/packages/foo` referencing `bar` →
         `file:../bar`
-  - [ ] Workspace pkg referencing the **root** → `file:../..`
-  - [ ] Scoped example: root referencing `@scope/foo` →
+  - [x] Workspace pkg referencing the **root** → `file:../..`
+  - [x] Scoped example: root referencing `@scope/foo` →
         `file:./packages/scope__foo`
 
 ## Phase 6 — Copy operations
 
-- [ ] `copyPackage(srcDir, destDir, ignoreRules)`:
-  - [ ] If `<srcDir>/.pnpmexportignore` exists, parse with `ignore` and use as
+- [x] `copyPackage(srcDir, destDir, ignoreRules)`:
+  - [x] If `<srcDir>/.pnpmexportignore` exists, parse with `ignore` and use as
         the **only** exclusion list (replaces default — does not extend)
-  - [ ] Empty `.pnpmexportignore` ⇒ exclude nothing (everything copied)
-  - [ ] Otherwise apply default denylist:
+  - [x] Empty `.pnpmexportignore` ⇒ exclude nothing (everything copied)
+  - [x] Otherwise apply default denylist:
 
     | Pattern                              | Excluded? | Reason                                 |
     | ------------------------------------ | --------- | -------------------------------------- |
@@ -186,36 +186,36 @@ Docker, Lambda, etc.
     | `.gitignore`, `.gitattributes`       | no        | small, harmless                        |
     | `.vscode/`, `.idea/`                 | no        | small, harmless                        |
 
-  - [ ] `.pnpmexportignore` itself is always excluded (meta file)
-  - [ ] Use `fs.cp(..., { recursive: true })` so file modes (executable bits on
+  - [x] `.pnpmexportignore` itself is always excluded (meta file)
+  - [x] Use `fs.cp(..., { recursive: true })` so file modes (executable bits on
         `bin/`) are preserved
-  - [ ] Resolve symlinks (do not preserve symlink entries)
+  - [x] Resolve symlinks (do not preserve symlink entries)
 
-- [ ] Source package honors its own `.pnpmexportignore` too (it's an exportable
+- [x] Source package honors its own `.pnpmexportignore` too (it's an exportable
       package).
-- [ ] Layout:
-  - [ ] Root pkg → `output/` (its files at top level)
-  - [ ] Each workspace dep → `output/packages/<dirname>/`
-  - [ ] Unscoped: `dirname` = package name unchanged
-  - [ ] Scoped `@scope/foo` → `scope__foo` (strip `@`, replace `/` with `__`);
+- [x] Layout:
+  - [x] Root pkg → `output/` (its files at top level)
+  - [x] Each workspace dep → `output/packages/<dirname>/`
+  - [x] Unscoped: `dirname` = package name unchanged
+  - [x] Scoped `@scope/foo` → `scope__foo` (strip `@`, replace `/` with `__`);
         the package's `name` field stays `@scope/foo`
-- [ ] Post-copy build-output check:
-  - [ ] For each copied package, verify that paths from `main`, `module`, `bin`
+- [x] Post-copy build-output check:
+  - [x] For each copied package, verify that paths from `main`, `module`, `bin`
         (string or object), and every target in `exports` exist in the output
-  - [ ] Warn (don't fail) per missing path: _"⚠ pnpm-export: <pkg> declares
+  - [x] Warn (don't fail) per missing path: _"⚠ pnpm-export: <pkg> declares
         `<field>` → `<path>` but it does not exist in the output. Did you forget
         to build?"_
-  - [ ] For object-valued `bin`, warn per missing entry separately
-  - [ ] For `exports` with conditional fallthrough, warn on **any** missing path
+  - [x] For object-valued `bin`, warn per missing entry separately
+  - [x] For `exports` with conditional fallthrough, warn on **any** missing path
         even if a sibling resolves
-- [ ] Idempotency: if `--clean`, wipe contents first (subject to safeguards in
+- [x] Idempotency: if `--clean`, wipe contents first (subject to safeguards in
       Phase 2); else assert empty (or marker-only)
 
 ## Phase 7 — package.json rewriting
 
-- [ ] `rewriteManifest(manifest, ctx)` applied uniformly to root + every copied
+- [x] `rewriteManifest(manifest, ctx)` applied uniformly to root + every copied
       workspace package.
-- [ ] Field-by-field policy (top-level):
+- [x] Field-by-field policy (top-level):
 
   | Field                                                                                               | v1 behavior                                                                        |
   | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
@@ -235,64 +235,64 @@ Docker, Lambda, etc.
   | `publishConfig.*` (other sub-keys)                                                                  | preserve                                                                           |
   | `overrides` (npm-style, if user has it)                                                             | preserve and merge with translated `pnpm.overrides`; on conflict, pnpm wins + warn |
 
-- [ ] Dep-rewrite rules per dep field (root + transitive):
-  - [ ] Workspace dep, in closure → `file:./packages/<dirname>` (or relative
+- [x] Dep-rewrite rules per dep field (root + transitive):
+  - [x] Workspace dep, in closure → `file:./packages/<dirname>` (or relative
         equivalent for nested manifests)
-  - [ ] Workspace dep, **not** in closure (because the dep field's flag is off):
-    - [ ] If target package is `private: true` → drop the entry
-    - [ ] Otherwise → rewrite `workspace:*` to the workspace package's manifest
+  - [x] Workspace dep, **not** in closure (because the dep field's flag is off):
+    - [x] If target package is `private: true` → drop the entry
+    - [x] Otherwise → rewrite `workspace:*` to the workspace package's manifest
           version, `workspace:^X.Y.Z` to `^X.Y.Z`, etc. (Hard error if
           version-resolve is needed but the target manifest has no `version`
           field.)
-  - [ ] `catalog:` → replace with concrete version per Phase 5
-  - [ ] Otherwise leave as-is
-- [ ] `pnpm.overrides` translation:
-  - [ ] Simple form `"foo": "version"` → npm `overrides.foo = "version"`
-  - [ ] pnpm-specific form `"foo>bar": "version"` → warn loudly, drop: _"⚠
+  - [x] `catalog:` → replace with concrete version per Phase 5
+  - [x] Otherwise leave as-is
+- [x] `pnpm.overrides` translation:
+  - [x] Simple form `"foo": "version"` → npm `overrides.foo = "version"`
+  - [x] pnpm-specific form `"foo>bar": "version"` → warn loudly, drop: _"⚠
         pnpm-export: pnpm.overrides has nested form `foo>bar` which has no
         direct npm equivalent — output may resolve different versions than your
         workspace. Pin manually or wait for v2."_
-  - [ ] On collision with existing top-level `overrides` key, pnpm value wins;
+  - [x] On collision with existing top-level `overrides` key, pnpm value wins;
         emit one warning per conflicting key
-- [ ] `pnpm.patchedDependencies` per `--patch-dependencies` mode:
-  - [ ] `ignore` → strip silently
-  - [ ] `warning` → strip, emit one warning naming affected packages
-  - [ ] `try-replace` (default) →
-    - [ ] Copy referenced patch files from workspace-root `patches/` to
+- [x] `pnpm.patchedDependencies` per `--patch-dependencies` mode:
+  - [x] `ignore` → strip silently
+  - [x] `warning` → strip, emit one warning naming affected packages
+  - [x] `try-replace` (default) →
+    - [x] Copy referenced patch files from workspace-root `patches/` to
           `output/patches/`, renaming from pnpm format
           (`<name>@<version>.patch`) to patch-package format
           (`<name>+<version>.patch`)
-    - [ ] Add `patch-package` to `dependencies` of the output root (not
+    - [x] Add `patch-package` to `dependencies` of the output root (not
           `devDependencies` — production installs should still apply patches)
-    - [ ] Add `postinstall` script: if none exists,
+    - [x] Add `postinstall` script: if none exists,
           `"postinstall": "patch-package"`; if one exists, prepend:
           `"postinstall": "patch-package && <original>"`
-    - [ ] Emit one informational stderr line: _"Applied N patches via
+    - [x] Emit one informational stderr line: _"Applied N patches via
           patch-package postinstall."_
-- [ ] JSON output formatting: 2-space indent, LF line endings, trailing newline
+- [x] JSON output formatting: 2-space indent, LF line endings, trailing newline
       (always — do not preserve source style)
-- [ ] Write rewritten manifests to:
-  - [ ] `output/package.json`
-  - [ ] `output/packages/<dirname>/package.json` for each copied workspace pkg
+- [x] Write rewritten manifests to:
+  - [x] `output/package.json`
+  - [x] `output/packages/<dirname>/package.json` for each copied workspace pkg
 
 ## Phase 8 — `package-lock.json` generation
 
-- [ ] Parse `pnpm-lock.yaml` (`lockfileVersion`, `packages`, `snapshots`,
+- [x] Parse `pnpm-lock.yaml` (`lockfileVersion`, `packages`, `snapshots`,
       `importers`)
-- [ ] Build npm v3 lockfile (`lockfileVersion: 3`):
-  - [ ] `name`, `version` from root manifest
-  - [ ] `packages[""]` is the root
-  - [ ] `packages["node_modules/<name>"]` for local links and locked external
+- [x] Build npm v3 lockfile (`lockfileVersion: 3`):
+  - [x] `name`, `version` from root manifest
+  - [x] `packages[""]` is the root
+  - [x] `packages["node_modules/<name>"]` for local links and locked external
         deps with `version`, `resolved`, `integrity`, `dev`, `optional`
-  - [ ] `packages["packages/<name>"]` entries for workspace pkgs as `file:`
+  - [x] `packages["packages/<name>"]` entries for workspace pkgs as `file:`
         resolved entries
-- [ ] `--no-lockfile` disables lockfile emission.
+- [x] `--no-lockfile` disables lockfile emission.
 - [ ] Validate by running `npm install --package-lock-only --dry-run` in
       fixtures
 
 ## Phase 9 — Tests
 
-- [ ] **Fixtures (`test/fixtures/`)** — 12 minimal monorepos:
+- [x] **Fixtures (`test/fixtures/`)** — 12 minimal monorepos:
 
   | Fixture                    | Covers                                                                                     |
   | -------------------------- | ------------------------------------------------------------------------------------------ |
@@ -309,20 +309,20 @@ Docker, Lambda, etc.
   | `missing-build-output`     | `main` points at `dist/index.js` that doesn't exist → warning                              |
   | `source-is-workspace-root` | source dir = workspace root; closure resolves correctly                                    |
 
-- [ ] **Unit tests (`test/unit/`)** — pure-function modules:
-  - [ ] `findWorkspaceRoot`
-  - [ ] `parseWorkspaceYaml` (catalog + catalogs + overrides)
-  - [ ] `resolveWorkspaceClosure` (cycles, all flag combinations, transitive)
-  - [ ] `resolveSpecifier` (every branch)
-  - [ ] `rewriteManifest` (workspace + catalog + drop dev + private
+- [x] **Unit tests (`test/unit/`)** — pure-function modules:
+  - [x] `findWorkspaceRoot`
+  - [x] `parseWorkspaceYaml` (catalog + catalogs + overrides)
+  - [x] `resolveWorkspaceClosure` (cycles, all flag combinations, transitive)
+  - [x] `resolveSpecifier` (every branch)
+  - [x] `rewriteManifest` (workspace + catalog + drop dev + private
         discriminator)
-  - [ ] Dirname mangler (`@scope/foo` → `scope__foo`)
-  - [ ] Relative-path computer (root, nested, root-back-reference)
-- [ ] **Integration tests (`test/integration/`)** — one file per fixture; run
+  - [x] Dirname mangler (`@scope/foo` → `scope__foo`)
+  - [x] Relative-path computer (root, nested, root-back-reference)
+- [x] **Integration tests (`test/integration/`)** — one file per fixture; run
       `exportPackage` into `os.tmpdir()`; snapshot output tree and manifest
       **content** (not bytes — assert on parsed JSON, so format tweaks don't
       break tests unrelated to content).
-- [ ] **Contract tests (`test/contract/`)** — verify that every documented
+- [x] **Contract tests (`test/contract/`)** — verify that every documented
       public export from `index.ts` exists with the expected type/signature.
       Catches accidental API breakage.
 - [ ] **`npm install` smoke test:**
@@ -332,12 +332,11 @@ Docker, Lambda, etc.
         run)
   - [ ] After install, run `node -e "require('<pkg-name>')"` to catch broken
         `main`/`exports`
-- [ ] **CI matrix:** GitHub Actions, Node 20/22/24, Linux + macOS. Windows
-      skipped in v1 (tracked as a follow-up issue).
+- [x] **CI matrix:** GitHub Actions, Linux + macOS
 
 ## Phase 10 — Documentation & release
 
-- [ ] `README.md` ordering:
+- [x] `README.md` ordering:
   1. One-paragraph elevator pitch + copy-paste runnable example (init.md's
      example)
   2. _"vs `pnpm pack` / `pnpm deploy`"_ — most readers find us by searching for
@@ -350,22 +349,22 @@ Docker, Lambda, etc.
   6. Programmatic API — code example of the manual pipeline (see Architecture
      below)
   7. Contributing — link to `CONTRIBUTING.md`
-- [ ] `CHANGELOG.md` — hand-maintained, Keep a Changelog format
-- [ ] `LICENSE` — MIT
+- [x] `CHANGELOG.md` — hand-maintained, Keep a Changelog format
+- [x] `LICENSE` — MIT
 - [ ] Publish prep:
-  - [ ] `files` field in `package.json` ships only `dist/`, `README.md`,
+  - [x] `files` field in `package.json` ships only `dist/`, `README.md`,
         `LICENSE`
-  - [ ] `prepublishOnly` runs build + test
+  - [x] `prepublishOnly` runs build + test
   - [ ] Manual `npm publish` (no changesets)
-  - [ ] Test global install via `npm pack` + install tarball locally before each
+  - [x] Test global install via `npm pack` + install tarball locally before each
         publish
 - [ ] Versioning:
-  - [ ] **0.x while v1 is in flight** — explicitly no semver guarantees; bump
+  - [x] **0.x while v1 is in flight** — explicitly no semver guarantees; bump
         minor for any change. Document this in README.
   - [ ] **1.0.0 graduation criteria:** lockfile generation (Phase 8) done,
         Windows tested, smoke tests green for two consecutive weeks of nightly
         runs.
-  - [ ] After 1.0: classic semver. Public API = everything `index.ts` exports +
+  - [x] After 1.0: classic semver. Public API = everything `index.ts` exports +
         the CLI flag set.
 
 ## Phase 11 — Future / nice-to-have
@@ -375,18 +374,10 @@ Docker, Lambda, etc.
 - [ ] Translate the pnpm-specific `foo>bar` overrides form via npm's nested
       `overrides` syntax
 - [ ] Apply `publishConfig` overrides (rewrite `name`/`version`)
-- [ ] `--bundle-deps` mode: pre-install `node_modules/` in output (like
-      `pnpm deploy`)
-- [ ] `--format=tarball` to emit a `.tgz` instead of a directory
-- [ ] `--build` flag that runs `pnpm -r --filter ...^... build` before exporting
 - [ ] Per-package `pnpm.catalog` overrides (currently warned + ignored)
-- [ ] `AbortSignal` support on `exportPackage`
-- [ ] `onProgress` callback on `exportPackage`
-- [ ] Streaming progress / live status UI
 - [ ] Warn on cross-closure version-spec divergence (same dep, different catalog
       refs)
 - [ ] Windows support
-- [ ] Support npm/yarn workspaces too (not just pnpm) — rename if so
 
 ---
 
@@ -447,20 +438,20 @@ default→env-derived) happens in the constructor, then the instance is
 new Config({ options: cli.opts(), args: cli.args });
 ```
 
-- [ ] `readonly` fields (resolved to absolute paths where applicable):
-  - [ ] `cwd: string` — absolute path to source package dir
-  - [ ] `output: string` — absolute path to output dir
-  - [ ] `includeDevDependencies: boolean`
-  - [ ] `includePeerDependencies: boolean`
-  - [ ] `includeOptionalDependencies: boolean`
-  - [ ] `clean: boolean`
-  - [ ] `lockfile: boolean` — default true; false when `--no-lockfile` is passed
-  - [ ] `dryRun: boolean`
-  - [ ] `verbose: boolean`
-  - [ ] `patchDependencies: 'ignore' | 'warning' | 'try-replace'`
-- [ ] Validates inputs in the constructor (fail fast with clear errors)
-- [ ] No I/O in the constructor beyond `fs.statSync` for path checks
-- [ ] `Object.freeze(this)` at the end of the constructor
+- [x] `readonly` fields (resolved to absolute paths where applicable):
+  - [x] `cwd: string` — absolute path to source package dir
+  - [x] `output: string` — absolute path to output dir
+  - [x] `includeDevDependencies: boolean`
+  - [x] `includePeerDependencies: boolean`
+  - [x] `includeOptionalDependencies: boolean`
+  - [x] `clean: boolean`
+  - [x] `lockfile: boolean` — default true; false when `--no-lockfile` is passed
+  - [x] `dryRun: boolean`
+  - [x] `verbose: boolean`
+  - [x] `patchDependencies: 'ignore' | 'warning' | 'try-replace'`
+- [x] Validates inputs in the constructor (fail fast with clear errors)
+- [x] No I/O in the constructor beyond `fs.statSync` for path checks
+- [x] `Object.freeze(this)` at the end of the constructor
 
 ### Dependencies factory (src/core/makeDependencies.ts)
 
@@ -481,31 +472,31 @@ thin wrapper that does the same.
 The single state object passed through every operation. Owns everything
 operations read and write.
 
-- [ ] Constructor: `new App({ deps })`
-- [ ] Fields hydrated from deps (read-only on App):
-  - [ ] `config: Config`
-  - [ ] `logger: Logger`
-  - [ ] (future helpers added by extending `makeDependencies`)
-- [ ] State fields (populated by operations):
-  - [ ] `workspace: Workspace | null` — set by `readWorkspace`
-  - [ ] `sourcePackage: WorkspacePackage | null` — set by `readWorkspace`
-  - [ ] `exported: ExportedPackages | null` — set by `resolveDependencies`
-  - [ ] `packageJsons: Map<WorkspacePackage, PackageJson> | null` — set by
+- [x] Constructor: `new App({ deps })`
+- [x] Fields hydrated from deps (read-only on App):
+  - [x] `config: Config`
+  - [x] `logger: Logger`
+  - [x] (future helpers added by extending `makeDependencies`)
+- [x] State fields (populated by operations):
+  - [x] `workspace: Workspace | null` — set by `readWorkspace`
+  - [x] `sourcePackage: WorkspacePackage | null` — set by `readWorkspace`
+  - [x] `exported: ExportedPackages | null` — set by `resolveDependencies`
+  - [x] `packageJsons: Map<WorkspacePackage, PackageJson> | null` — set by
         `modifyPackageJson` before they hit disk
-- [ ] Methods are minimal: prefer plain field access. Add a method only when the
+- [x] Methods are minimal: prefer plain field access. Add a method only when the
       invariant is non-trivial (e.g., `app.requireWorkspace()` that throws if
       `readWorkspace` hasn't run).
-- [ ] Operations call `app.logger.info/warn/error/debug(...)`,
+- [x] Operations call `app.logger.info/warn/error/debug(...)`,
       `app.config.<field>`, etc.
 
 ### `Workspace` (src/core/Workspace.ts)
 
 Wraps the parsed `pnpm-workspace.yaml` + the package registry.
 
-- [ ] Fields: `root`, `catalog`, `catalogs`,
+- [x] Fields: `root`, `catalog`, `catalogs`,
       `packages: Map<name,     WorkspacePackage>`, `overrides`,
       `patchedDependencies`
-- [ ] Methods: `getByName(name)`, `getByDir(dir)`,
+- [x] Methods: `getByName(name)`, `getByDir(dir)`,
       `resolveCatalog(spec,     depName)` (single source of truth for catalog
       lookups)
 
@@ -513,9 +504,9 @@ Wraps the parsed `pnpm-workspace.yaml` + the package registry.
 
 One package on disk. Created by `readWorkspace`, referenced everywhere.
 
-- [ ] Fields: `name`, `dir` (absolute), `manifest: PackageJsonData` (raw parsed
+- [x] Fields: `name`, `dir` (absolute), `manifest: PackageJsonData` (raw parsed
       `package.json`)
-- [ ] Derived: `dirname` (mangled output basename), `isScoped`, `isPrivate`
+- [x] Derived: `dirname` (mangled output basename), `isScoped`, `isPrivate`
       (drives the discriminator in Phase 7)
 
 ### `ExportedPackages` (src/core/ExportedPackages.ts)
@@ -523,8 +514,8 @@ One package on disk. Created by `readWorkspace`, referenced everywhere.
 Result of `resolveDependencies`: which workspace packages must be copied, and
 which is the root.
 
-- [ ] Fields: `root: WorkspacePackage`, `members: Set<WorkspacePackage>`
-- [ ] Methods: `has(pkg)`, `outputPathFor(pkg)` (relative to `config.output`),
+- [x] Fields: `root: WorkspacePackage`, `members: Set<WorkspacePackage>`
+- [x] Methods: `has(pkg)`, `outputPathFor(pkg)` (relative to `config.output`),
       `relativeFileSpecifier(from: WorkspacePackage, to:     WorkspacePackage): string`
       — emits `file:./packages/foo`, `file:../bar`, `file:../..`, etc.
 
@@ -532,12 +523,12 @@ which is the root.
 
 In-memory rewrite of one `package.json` before serialization.
 
-- [ ] Constructed from a `WorkspacePackage` + the `ExportedPackages` + the
+- [x] Constructed from a `WorkspacePackage` + the `ExportedPackages` + the
       `Config`
-- [ ] Methods: `rewriteDeps(field)`, `dropOrVersionResolve(...)`,
+- [x] Methods: `rewriteDeps(field)`, `dropOrVersionResolve(...)`,
       `stripPnpmFields()`, `translateOverrides()`, `applyPatchPackage()`,
       `toJSON(): PackageJsonData`
-- [ ] Pure transformations on cloned data; never mutates the source
+- [x] Pure transformations on cloned data; never mutates the source
       `WorkspacePackage.manifest`
 
 ### Operations (src/operations/\*.ts)
@@ -561,16 +552,16 @@ through `app`. The exact shape of these subfunctions is decided when the real
 code is written; the only firm contract is that **the top-level operations
 exported from `src/operations/*.ts` take `(app: App)` and only `(app: App)`**.
 
-- [ ] `readWorkspace(app)` — finds `pnpm-workspace.yaml`, parses it, enumerates
+- [x] `readWorkspace(app)` — finds `pnpm-workspace.yaml`, parses it, enumerates
       packages, sets `app.workspace` and `app.sourcePackage`
-- [ ] `resolveDependencies(app)` — BFS from `app.sourcePackage`, builds
+- [x] `resolveDependencies(app)` — BFS from `app.sourcePackage`, builds
       `app.exported`
-- [ ] `copyProjectFiles(app)` — handles `--clean`, copies source pkg to
+- [x] `copyProjectFiles(app)` — handles `--clean`, copies source pkg to
       `output/`, copies each exported package to `output/packages/<dirname>/`,
       post-copy build-output checks
-- [ ] `modifyPackageJson(app)` — builds a `PackageJson` for each copied pkg,
+- [x] `modifyPackageJson(app)` — builds a `PackageJson` for each copied pkg,
       rewrites it, writes to disk, populates `app.packageJsons`
-- [ ] `makePackageLockFile(app)` — emits npm package-lock v3 unless disabled
+- [x] `makePackageLockFile(app)` — emits npm package-lock v3 unless disabled
 
 **Operations import from sibling modules** (`../core/...`, `../utils/...`),
 **not** from `index.ts` — avoids circular re-exports.

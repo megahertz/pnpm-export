@@ -1,7 +1,0 @@
-packages:
-  - packages/*
-catalog:
-  lodash: ^4.17.21
-catalogs:
-  strict:
-    react: ^19.0.0
