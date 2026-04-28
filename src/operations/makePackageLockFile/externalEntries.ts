@@ -1,4 +1,8 @@
 import type { PackageLockPackage } from '../../core/types.ts';
+import {
+  isWorkspaceSpecifier,
+  workspaceVersionSpecifier,
+} from '../../utils/specifiers.ts';
 import type { ExternalState, LockContext } from './internals.ts';
 import {
   applyPackageFlags,
@@ -9,13 +13,14 @@ import {
   packageMetadataFor,
   parsePnpmPackageKey,
   snapshotFor,
+  tryParsePnpmPackageKey,
 } from './pnpmKeys.ts';
 
 export function externalPackageEntry(
   context: LockContext,
   external: ExternalState,
 ): PackageLockPackage {
-  const parsed = parsePnpmPackageKey(external.snapshotKey);
+  const parsed = parseExternalPackageKey(external);
   const metadata = packageMetadataFor(context.pnpmLock, external.snapshotKey);
   const snapshot = snapshotFor(context.pnpmLock, external.snapshotKey);
   const entry: PackageLockPackage = {
@@ -25,6 +30,9 @@ export function externalPackageEntry(
       registryTarball(parsed.name, parsed.version),
   };
 
+  if (parsed.name !== external.name) {
+    entry.name = parsed.name;
+  }
   if (metadata?.resolution?.integrity) {
     entry.integrity = metadata.resolution.integrity;
   }
@@ -32,14 +40,28 @@ export function externalPackageEntry(
   copyDependencyMap(
     entry,
     'dependencies',
-    snapshot?.dependencies ?? metadata?.dependencies,
+    packageDependencyMap(
+      context,
+      snapshot?.dependencies,
+      metadata?.dependencies,
+      metadata?.peerDependencies,
+    ),
   );
   copyDependencyMap(
     entry,
     'optionalDependencies',
-    snapshot?.optionalDependencies ?? metadata?.optionalDependencies,
+    packageDependencyMap(
+      context,
+      snapshot?.optionalDependencies,
+      metadata?.optionalDependencies,
+      metadata?.peerDependencies,
+    ),
   );
-  copyDependencyMap(entry, 'peerDependencies', metadata?.peerDependencies);
+  copyDependencyMap(
+    entry,
+    'peerDependencies',
+    normalizeDependencyMap(context, metadata?.peerDependencies),
+  );
   if (metadata?.peerDependenciesMeta) {
     entry.peerDependenciesMeta = metadata.peerDependenciesMeta;
   }
@@ -74,4 +96,87 @@ function registryTarball(packageName: string, version: string): string {
     ? packageName.slice(packageName.indexOf('/') + 1)
     : packageName;
   return `https://registry.npmjs.org/${packageName}/-/${tarballName}-${version}.tgz`;
+}
+
+function parseExternalPackageKey(external: ExternalState): {
+  name: string;
+  version: string;
+} {
+  const aliasValue = external.snapshotKey.startsWith(`${external.name}@`)
+    ? external.snapshotKey.slice(`${external.name}@`.length)
+    : undefined;
+  const aliasTarget = aliasValue
+    ? tryParsePnpmPackageKey(aliasValue)
+    : undefined;
+  return aliasTarget ?? parsePnpmPackageKey(external.snapshotKey);
+}
+
+function packageDependencyMap(
+  context: LockContext,
+  snapshotDependencies: Record<string, string> | undefined,
+  metadataDependencies: Record<string, string> | undefined,
+  peerDependencies: Record<string, string> | undefined,
+): Record<string, string> | undefined {
+  const dependencies =
+    metadataDependencies && Object.keys(metadataDependencies).length > 0
+      ? metadataDependencies
+      : snapshotDependencies;
+  if (!dependencies) {
+    return undefined;
+  }
+
+  const peerNames = new Set(Object.keys(peerDependencies ?? {}));
+  const filtered = Object.fromEntries(
+    Object.entries(dependencies).filter(
+      ([name]) =>
+        metadataDependencies?.[name] !== undefined || !peerNames.has(name),
+    ),
+  );
+  return normalizeDependencyMap(context, filtered);
+}
+
+function normalizeDependencyMap(
+  context: LockContext,
+  dependencies: Record<string, string> | undefined,
+): Record<string, string> | undefined {
+  if (!dependencies) {
+    return undefined;
+  }
+
+  return Object.fromEntries(
+    Object.entries(dependencies).map(([name, version]) => [
+      name,
+      normalizeDependencyVersion(context, name, version),
+    ]),
+  );
+}
+
+function normalizeDependencyVersion(
+  context: LockContext,
+  name: string,
+  version: string,
+): string {
+  if (isWorkspaceSpecifier(version)) {
+    const target = context.app.requireWorkspace().getByName(name);
+    return target ? workspaceVersionSpecifier(version, target) : '*';
+  }
+
+  const normalized = version.startsWith('/') ? version.slice(1) : version;
+  const withoutPeerSuffix = stripPeerSuffix(normalized);
+  const parsed = tryParsePnpmPackageKey(withoutPeerSuffix);
+  if (parsed) {
+    return parsed.name === name
+      ? parsed.version
+      : `npm:${parsed.name}@${parsed.version}`;
+  }
+
+  const namePrefix = `${name}@`;
+  return withoutPeerSuffix.startsWith(namePrefix)
+    ? withoutPeerSuffix.slice(namePrefix.length)
+    : withoutPeerSuffix;
+}
+
+function stripPeerSuffix(version: string): string {
+  const peerStart = version.indexOf('(');
+  return peerStart === -1 ? version : version.slice(0, peerStart);
 }

@@ -2,6 +2,7 @@
   "name": "app",
   "version": "1.0.0",
   "dependencies": {
+    "alias-pkg": "^1.0.0",
     "foo": "^1.0.0",
     "bar": "^1.0.0"
   }

@@ -4,7 +4,8 @@
     "foo": "^1.0.0"
   },
   "overrides": {
-    "foo": "1.0.0"
+    "foo": "1.0.0",
+    "local-existing": "workspace:^"
   },
   "pnpm": {
     "overrides": {

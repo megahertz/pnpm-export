@@ -60,13 +60,11 @@ export function applyPackageFlags(
   entry: PackageLockPackage,
   flags: LockFlags,
 ): void {
-  if (flags.dev && flags.optional) {
-    // eslint-disable-next-line no-param-reassign -- Lock entry builders intentionally fill a caller-owned entry.
-    entry.devOptional = true;
-  } else if (flags.dev) {
+  if (flags.dev) {
     // eslint-disable-next-line no-param-reassign -- Lock entry builders intentionally fill a caller-owned entry.
     entry.dev = true;
-  } else if (flags.optional) {
+  }
+  if (flags.optional) {
     // eslint-disable-next-line no-param-reassign -- Lock entry builders intentionally fill a caller-owned entry.
     entry.optional = true;
   }

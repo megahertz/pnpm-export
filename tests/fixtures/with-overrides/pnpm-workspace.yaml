@@ -2,3 +2,4 @@ packages:
   - packages/*
 overrides:
   from-workspace-yaml: 1.0.0
+  local-override: workspace:*

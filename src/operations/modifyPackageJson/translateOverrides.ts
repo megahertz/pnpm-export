@@ -1,5 +1,10 @@
 import type { PackageJson } from '../../core/PackageJson.ts';
 import type { DependencyMap } from '../../core/types.ts';
+import {
+  isCatalogSpecifier,
+  isWorkspaceSpecifier,
+  workspaceVersionSpecifier,
+} from '../../utils/specifiers.ts';
 import { type ModifyContext, readDependencyMap } from './internals.ts';
 
 export function translateOverrides(
@@ -8,8 +13,12 @@ export function translateOverrides(
 ): void {
   const { data, pkg } = packageJson;
   const existing = readDependencyMap(data.overrides);
-  const translated: DependencyMap = { ...existing };
+  const translated: DependencyMap = {};
   const sources: DependencyMap[] = [];
+
+  for (const [key, value] of Object.entries(existing)) {
+    translated[key] = translateOverrideValue(key, value, ctx);
+  }
 
   if (pkg === ctx.exported.root) {
     sources.push(ctx.workspace.overrides);
@@ -28,12 +37,16 @@ export function translateOverrides(
         continue;
       }
 
-      if (translated[key] !== undefined && translated[key] !== value) {
+      const translatedValue = translateOverrideValue(key, value, ctx);
+      if (
+        translated[key] !== undefined &&
+        translated[key] !== translatedValue
+      ) {
         ctx.logger.warn(
           `⚠ pnpm-export: pnpm.overrides value for \`${key}\` overrides existing npm overrides value.`,
         );
       }
-      translated[key] = value;
+      translated[key] = translatedValue;
     }
   }
 
@@ -42,4 +55,21 @@ export function translateOverrides(
   } else {
     delete data.overrides;
   }
+}
+
+function translateOverrideValue(
+  key: string,
+  value: string,
+  ctx: ModifyContext,
+): string {
+  if (isWorkspaceSpecifier(value)) {
+    const target = ctx.workspace.getByName(key);
+    return target ? workspaceVersionSpecifier(value, target) : value;
+  }
+
+  if (isCatalogSpecifier(value)) {
+    return ctx.workspace.resolveCatalog(value, key);
+  }
+
+  return value;
 }

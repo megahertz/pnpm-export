@@ -189,7 +189,7 @@ function mergeFlags<T>(
   return true;
 }
 
-function resolveDirectSnapshotKey(
+export function resolveDirectSnapshotKey(
   context: LockContext,
   pkg: WorkspacePackage,
   field: DepKind,

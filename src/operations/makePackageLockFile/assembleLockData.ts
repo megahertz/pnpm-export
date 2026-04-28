@@ -1,8 +1,8 @@
 import type { PackageLockData, PackageLockPackage } from '../../core/types.ts';
 import { externalPackageEntry } from './externalEntries.ts';
+import { collectExternalTreeEntries } from './externalTree.ts';
 import {
   type LockContext,
-  nodeModulesPath,
   requireManifest,
   sortPackageEntries,
   workspacePackageEntryPath,
@@ -35,19 +35,7 @@ export function assembleLockData(context: LockContext): PackageLockData {
     });
   }
 
-  const externalNodePaths = new Map<string, string>();
-  for (const external of [...context.externalStates.values()].toSorted((a, b) =>
-    nodeModulesPath(a.name).localeCompare(nodeModulesPath(b.name)),
-  )) {
-    const entryPath = nodeModulesPath(external.name);
-    const existing = externalNodePaths.get(entryPath);
-    if (existing && existing !== external.snapshotKey) {
-      context.app.logger.warn(
-        `⚠ pnpm-export: \`${external.name}\` is locked to multiple versions. package-lock.json will only lock one version and rely on npm to resolve the rest.`,
-      );
-      continue;
-    }
-    externalNodePaths.set(entryPath, external.snapshotKey);
+  for (const [entryPath, external] of collectExternalTreeEntries(context)) {
     packages[entryPath] = externalPackageEntry(context, external);
   }
 

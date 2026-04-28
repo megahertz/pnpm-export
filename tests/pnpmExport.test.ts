@@ -198,6 +198,8 @@ describe('pnpmExport integration', () => {
     expect(root.overrides).toEqual({
       'foo': '2.0.0',
       'from-workspace-yaml': '1.0.0',
+      'local-existing': '^2.0.0',
+      'local-override': '1.2.3',
     });
     expect(logger.warnings.join('\n')).toContain('foo>bar');
   });
@@ -460,7 +462,7 @@ describe('pnpmExport integration', () => {
     );
   });
 
-  it('warns and only locks one version when a dependency is locked to multiple versions', async () => {
+  it('nests transitive dependencies when a package is locked to multiple versions', async () => {
     const repo = await makeTempFixtureCopy('multiple-versions');
     const output = await makeTempOutputDir();
 
@@ -470,18 +472,29 @@ describe('pnpmExport integration', () => {
       lockfile: true,
     });
 
-    expect(logger.warnings).toContainEqual(
-      expect.stringContaining(
-        'is locked to multiple versions. package-lock.json will only lock one version',
-      ),
+    expect(logger.warnings.join('\n')).not.toContain(
+      'is locked to multiple versions',
     );
 
     const lockfile = await readJson<Record<string, unknown>>(
       path.join(output, 'package-lock.json'),
     );
-    expect((lockfile as Record<string, unknown>).packages).toHaveProperty(
-      'node_modules/baz',
-    );
+    expect(lockfile).toMatchObject({
+      packages: {
+        'node_modules/alias-pkg': {
+          name: 'actual-pkg',
+          version: '1.0.0',
+          resolved:
+            'https://registry.npmjs.org/actual-pkg/-/actual-pkg-1.0.0.tgz',
+        },
+        'node_modules/baz': {
+          version: '2.0.0',
+        },
+        'node_modules/foo/node_modules/baz': {
+          version: '1.0.0',
+        },
+      },
+    });
   });
 
   it('skips missing patch-package in lockfile without crashing', async () => {
