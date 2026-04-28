@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { copyFixture, tempDir } from './helpers.ts';
+import { makeTempFixtureCopy, makeTempOutputDir } from './helpers.ts';
 
 const execFileAsync = promisify(execFile);
 
@@ -40,8 +40,8 @@ describe('cli', () => {
   });
 
   it('prints a dry-run tree and writes nothing', async () => {
-    const repo = await copyFixture('basic-monorepo');
-    const output = await freshOutput();
+    const repo = await makeTempFixtureCopy('basic-monorepo');
+    const output = await makeTempOutputDir();
 
     const result = await execFileAsync('node', [
       'dist/cli.js',
@@ -60,8 +60,8 @@ describe('cli', () => {
   });
 
   it('emits package-lock.json by default', async () => {
-    const repo = await copyFixture('basic-monorepo');
-    const output = await freshOutput();
+    const repo = await makeTempFixtureCopy('basic-monorepo');
+    const output = await makeTempOutputDir();
 
     await execFileAsync('node', [
       'dist/cli.js',
@@ -77,8 +77,8 @@ describe('cli', () => {
   });
 
   it('skips package-lock.json with --no-lockfile', async () => {
-    const repo = await copyFixture('basic-monorepo');
-    const output = await freshOutput();
+    const repo = await makeTempFixtureCopy('basic-monorepo');
+    const output = await makeTempOutputDir();
 
     await execFileAsync('node', [
       'dist/cli.js',
@@ -93,10 +93,23 @@ describe('cli', () => {
       fs.access(path.join(output, 'package-lock.json')),
     ).rejects.toThrow();
   });
-});
 
-async function freshOutput(): Promise<string> {
-  const output = await tempDir('pnpm-export-cli-');
-  await fs.rm(output, { recursive: true, force: true });
-  return output;
-}
+  it('includes dev dependencies when -D is passed', async () => {
+    const repo = await makeTempFixtureCopy('basic-monorepo');
+    const output = await makeTempOutputDir();
+
+    await execFileAsync('node', [
+      'dist/cli.js',
+      '-C',
+      path.join(repo, 'packages/api'),
+      '-o',
+      output,
+      '-D',
+      '--no-lockfile',
+    ]);
+
+    await expect(
+      fs.access(path.join(output, 'packages/dev-config/package.json')),
+    ).resolves.toBeUndefined();
+  });
+});

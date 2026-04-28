@@ -3,12 +3,17 @@ import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import { App, Config, makeDependencies, pnpmExport } from '../src/index.ts';
 import type { ConfigOptions, PackageJsonData } from '../src/index.ts';
-import { copyFixture, listFiles, readJson, tempDir } from './helpers.ts';
+import {
+  listFiles,
+  makeTempFixtureCopy,
+  makeTempOutputDir,
+  readJson,
+} from './helpers.ts';
 
 describe('pnpmExport integration', () => {
   it('exports the basic monorepo closure and rewrites manifests', async () => {
-    const repo = await copyFixture('basic-monorepo');
-    const output = await freshOutput();
+    const repo = await makeTempFixtureCopy('basic-monorepo');
+    const output = await makeTempOutputDir();
 
     await runPnpmExport({
       cwd: path.join(repo, 'packages/api'),
@@ -67,8 +72,8 @@ describe('pnpmExport integration', () => {
   });
 
   it('handles scoped package output directory names', async () => {
-    const repo = await copyFixture('scoped');
-    const output = await freshOutput();
+    const repo = await makeTempFixtureCopy('scoped');
+    const output = await makeTempOutputDir();
 
     await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
@@ -88,8 +93,8 @@ describe('pnpmExport integration', () => {
   });
 
   it('resolves default and named catalogs while warning on per-package catalog overrides', async () => {
-    const repo = await copyFixture('with-catalogs');
-    const output = await freshOutput();
+    const repo = await makeTempFixtureCopy('with-catalogs');
+    const output = await makeTempOutputDir();
     const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await runPnpmExport({
@@ -111,8 +116,8 @@ describe('pnpmExport integration', () => {
   });
 
   it('follows peer and optional workspace dependency edges by default', async () => {
-    const peerRepo = await copyFixture('with-peer-deps');
-    const peerOutput = await freshOutput();
+    const peerRepo = await makeTempFixtureCopy('with-peer-deps');
+    const peerOutput = await makeTempOutputDir();
     await runPnpmExport({
       cwd: path.join(peerRepo, 'packages/app'),
       output: peerOutput,
@@ -122,8 +127,8 @@ describe('pnpmExport integration', () => {
       'packages/plugin/package.json',
     );
 
-    const optionalRepo = await copyFixture('with-optional-deps');
-    const optionalOutput = await freshOutput();
+    const optionalRepo = await makeTempFixtureCopy('with-optional-deps');
+    const optionalOutput = await makeTempOutputDir();
     await runPnpmExport({
       cwd: path.join(optionalRepo, 'packages/app'),
       output: optionalOutput,
@@ -141,8 +146,8 @@ describe('pnpmExport integration', () => {
   });
 
   it('drops private excluded workspace edges and version-resolves public ones', async () => {
-    const repo = await copyFixture('private-vs-public');
-    const output = await freshOutput();
+    const repo = await makeTempFixtureCopy('private-vs-public');
+    const output = await makeTempOutputDir();
 
     await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
@@ -161,8 +166,8 @@ describe('pnpmExport integration', () => {
   });
 
   it('copies package files with .pnpmexportignore reset behavior', async () => {
-    const repo = await copyFixture('with-pnpmexportignore');
-    const output = await freshOutput();
+    const repo = await makeTempFixtureCopy('with-pnpmexportignore');
+    const output = await makeTempOutputDir();
 
     await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
@@ -179,8 +184,8 @@ describe('pnpmExport integration', () => {
   });
 
   it('translates overrides and warns about pnpm nested overrides', async () => {
-    const repo = await copyFixture('with-overrides');
-    const output = await freshOutput();
+    const repo = await makeTempFixtureCopy('with-overrides');
+    const output = await makeTempOutputDir();
     const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await runPnpmExport({
@@ -201,8 +206,8 @@ describe('pnpmExport integration', () => {
   });
 
   it('copies patches in try-replace mode and mutates the root install script', async () => {
-    const repo = await copyFixture('with-patches');
-    const output = await freshOutput();
+    const repo = await makeTempFixtureCopy('with-patches');
+    const output = await makeTempOutputDir();
     const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await runPnpmExport({
@@ -229,8 +234,8 @@ describe('pnpmExport integration', () => {
   });
 
   it('supports patch warning and ignore modes without copying patch files', async () => {
-    const warningRepo = await copyFixture('with-patches');
-    const warningOutput = await freshOutput();
+    const warningRepo = await makeTempFixtureCopy('with-patches');
+    const warningOutput = await makeTempOutputDir();
     const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await runPnpmExport({
@@ -249,8 +254,8 @@ describe('pnpmExport integration', () => {
       ),
     ).toBe(false);
 
-    const ignoreRepo = await copyFixture('with-patches');
-    const ignoreOutput = await freshOutput();
+    const ignoreRepo = await makeTempFixtureCopy('with-patches');
+    const ignoreOutput = await makeTempOutputDir();
     await runPnpmExport({
       cwd: path.join(ignoreRepo, 'packages/app'),
       output: ignoreOutput,
@@ -264,8 +269,8 @@ describe('pnpmExport integration', () => {
   });
 
   it('warns when declared build output is missing', async () => {
-    const repo = await copyFixture('missing-build-output');
-    const output = await freshOutput();
+    const repo = await makeTempFixtureCopy('missing-build-output');
+    const output = await makeTempOutputDir();
     const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await runPnpmExport({
@@ -278,8 +283,8 @@ describe('pnpmExport integration', () => {
   });
 
   it('exports when the source package is the workspace root', async () => {
-    const repo = await copyFixture('source-is-workspace-root');
-    const output = await freshOutput();
+    const repo = await makeTempFixtureCopy('source-is-workspace-root');
+    const output = await makeTempOutputDir();
 
     await runPnpmExport({
       cwd: repo,
@@ -294,9 +299,161 @@ describe('pnpmExport integration', () => {
     });
   });
 
+  it('includes workspace dev dependencies when requested', async () => {
+    const repo = await makeTempFixtureCopy('basic-monorepo');
+    const output = await makeTempOutputDir();
+
+    await runPnpmExport({
+      cwd: path.join(repo, 'packages/api'),
+      output,
+      devDependencies: true,
+      lockfile: false,
+    });
+
+    expect(await listFiles(output)).toContain(
+      'packages/dev-config/package.json',
+    );
+    const root = await readJson<PackageJsonData>(
+      path.join(output, 'package.json'),
+    );
+    expect(root.devDependencies).toEqual({
+      'eslint': '^9.0.0',
+      'dev-config': 'file:./packages/dev-config',
+    });
+  });
+
+  it('validates output directory locations', async () => {
+    const repo = await makeTempFixtureCopy('basic-monorepo');
+    const cwd = path.join(repo, 'packages/api');
+
+    await expect(runPnpmExport({ cwd, output: repo })).rejects.toThrow(
+      'cannot equal workspace root',
+    );
+
+    await expect(
+      runPnpmExport({ cwd, output: path.join(cwd, 'dist') }),
+    ).rejects.toThrow('cannot be inside source dir');
+
+    await expect(
+      runPnpmExport({ cwd, output: path.join(repo, 'packages/shared') }),
+    ).rejects.toThrow('is an existing workspace package');
+  });
+
+  it('handles --clean flag properly with existing directories', async () => {
+    const repo = await makeTempFixtureCopy('basic-monorepo');
+    const output = await makeTempOutputDir();
+
+    await fs.mkdir(output, { recursive: true });
+    await fs.writeFile(path.join(output, 'dummy.txt'), 'hello');
+
+    await expect(
+      runPnpmExport({
+        cwd: path.join(repo, 'packages/api'),
+        output,
+        lockfile: false,
+      }),
+    ).rejects.toThrow('is non-empty');
+
+    await expect(
+      runPnpmExport({
+        cwd: path.join(repo, 'packages/api'),
+        output,
+        clean: true,
+        lockfile: false,
+      }),
+    ).rejects.toThrow('does not look like a prior pnpm-export output');
+
+    await fs.writeFile(path.join(output, '.pnpm-export-cleaned'), '');
+    await runPnpmExport({
+      cwd: path.join(repo, 'packages/api'),
+      output,
+      clean: true,
+      lockfile: false,
+    });
+
+    expect(await fileExists(path.join(output, 'package.json'))).toBe(true);
+    expect(await fileExists(path.join(output, 'dummy.txt'))).toBe(false);
+  });
+
+  it('strips pnpm specific fields and packageManager from manifests', async () => {
+    const repo = await makeTempFixtureCopy('with-catalogs');
+    const output = await makeTempOutputDir();
+    const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const appPkgPath = path.join(repo, 'packages/app/package.json');
+    const appPkg = await readJson<PackageJsonData>(appPkgPath);
+    appPkg.packageManager = 'pnpm@8.0.0';
+    appPkg.workspaces = ['packages/*'];
+    appPkg.pnpm = { neverBuiltDependencies: ['foo'] };
+    appPkg.publishConfig = { directory: 'dist', access: 'public' };
+    await fs.writeFile(appPkgPath, JSON.stringify(appPkg, undefined, 2));
+
+    await runPnpmExport({
+      cwd: path.join(repo, 'packages/app'),
+      output,
+      lockfile: false,
+    });
+
+    const root = await readJson<PackageJsonData>(
+      path.join(output, 'package.json'),
+    );
+    expect(root.packageManager).toBeUndefined();
+    expect(root.workspaces).toBeUndefined();
+    expect(root.pnpm).toBeUndefined();
+    expect(root.publishConfig).toEqual({ access: 'public' });
+
+    warn.mockRestore();
+  });
+
+  it('rewrites different workspace specifier variations', async () => {
+    const repo = await makeTempFixtureCopy('basic-monorepo');
+    const output = await makeTempOutputDir();
+
+    await fs.mkdir(path.join(repo, 'packages/shared-tilde'));
+    await fs.writeFile(
+      path.join(repo, 'packages/shared-tilde/package.json'),
+      JSON.stringify({ name: 'shared-tilde', version: '1.0.0' }),
+    );
+    await fs.mkdir(path.join(repo, 'packages/shared-caret'));
+    await fs.writeFile(
+      path.join(repo, 'packages/shared-caret/package.json'),
+      JSON.stringify({ name: 'shared-caret', version: '1.0.0' }),
+    );
+    await fs.mkdir(path.join(repo, 'packages/shared-exact'));
+    await fs.writeFile(
+      path.join(repo, 'packages/shared-exact/package.json'),
+      JSON.stringify({ name: 'shared-exact', version: '1.0.0' }),
+    );
+
+    const appPkgPath = path.join(repo, 'packages/api/package.json');
+    const appPkg = await readJson<PackageJsonData>(appPkgPath);
+    appPkg.dependencies = {
+      ...appPkg.dependencies,
+      'shared-tilde': 'workspace:~',
+      'shared-caret': 'workspace:^',
+      'shared-exact': 'workspace:1.0.0',
+    };
+    await fs.writeFile(appPkgPath, JSON.stringify(appPkg, undefined, 2));
+
+    await runPnpmExport({
+      cwd: path.join(repo, 'packages/api'),
+      output,
+      lockfile: false,
+    });
+
+    const root = await readJson<PackageJsonData>(
+      path.join(output, 'package.json'),
+    );
+    expect(root.dependencies).toMatchObject({
+      'shared-tilde': 'file:./packages/shared-tilde',
+      'shared-caret': 'file:./packages/shared-caret',
+      'shared-exact': 'file:./packages/shared-exact',
+    });
+  });
+
   it('errors for self-references', async () => {
-    const repo = await copyFixture('cyclic');
-    const output = await freshOutput();
+    const repo = await makeTempFixtureCopy('cyclic');
+    const output = await makeTempOutputDir();
 
     await expect(
       runPnpmExport({
@@ -313,12 +470,6 @@ async function runPnpmExport(options: ConfigOptions): Promise<void> {
   const app = new App({ deps });
 
   await pnpmExport(app);
-}
-
-async function freshOutput(): Promise<string> {
-  const output = await tempDir('pnpm-export-output-');
-  await fs.rm(output, { recursive: true, force: true });
-  return output;
 }
 
 async function fileExists(filePath: string): Promise<boolean> {

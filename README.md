@@ -52,46 +52,6 @@ Options:
 
 <!-- pnpm-export-help:end -->
 
-## Recipes
-
-Docker:
-
-```dockerfile
-FROM node:22-slim
-WORKDIR /app
-COPY . .
-RUN npm install --omit=dev
-CMD ["node", "dist/index.js"]
-```
-
-App Engine:
-
-```yaml
-runtime: nodejs22
-entrypoint: npm start
-```
-
-GitHub Actions:
-
-```yaml
-- run: pnpm-export -C packages/api --output /tmp/api --clean
-- run: npm install
-  working-directory: /tmp/api
-```
-
-## Limitations
-
-Lockfile generation requires enough data in `pnpm-lock.yaml` to resolve exported
-external dependencies; pass `--no-lockfile` to skip it. v1 has no `--build` hook
-([tracking: future build flag](./.ai/plan.md#phase-11--future--nice-to-have)),
-no Windows support
-([tracking: Windows support](./.ai/plan.md#phase-11--future--nice-to-have)), and
-does not honor the package `files` field while copying
-([tracking: files field support](./.ai/plan.md#phase-11--future--nice-to-have)).
-
-`pnpm-export` stays on `0.x` while v1 is in flight. There are no semver
-guarantees before 1.0; minor versions may include breaking changes.
-
 ## Programmatic API
 
 ```ts
@@ -110,6 +70,6 @@ const app = new App({ deps });
 await pnpmExport(app);
 ```
 
-## Contributing
+## License
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md).
+Licensed under MIT.
