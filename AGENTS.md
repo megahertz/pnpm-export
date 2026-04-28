@@ -11,7 +11,8 @@
 - CLI behavior depends on a built `dist/cli.js`; the CLI tests run
   `pnpm run build` before assertions.
 - If CLI flags or help text change, run `pnpm docs:flags` to refresh the README.
-- Full validation is `pnpm check`.
+- Full ts/lint/test validation is `pnpm check`. It's very fast. Run After every
+  significant change.
 
 ## Architecture
 

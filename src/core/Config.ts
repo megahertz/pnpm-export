@@ -37,7 +37,7 @@ export class Config {
     this.includePeerDependencies = opts.peerDependencies !== false;
     this.includeOptionalDependencies = opts.optionalDependencies !== false;
     this.clean = Boolean(opts.clean);
-    this.lockfile = opts.lockfile !== false;
+    this.lockfile = opts.lockfile === true;
     this.dryRun = Boolean(opts.dryRun);
     this.silent = Boolean(opts.silent);
     this.patchDependencies =

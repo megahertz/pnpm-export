@@ -69,7 +69,7 @@ const program = new Command()
     'try-replace',
   )
   .option('--clean', 'wipe output directory contents before writing', false)
-  .option('--no-lockfile', 'do not emit package-lock.json')
+  .option('--lockfile', 'emit package-lock.json (experimental)', false)
   .option('--dry-run', 'print planned actions without writing', false)
   .option('--silent', 'suppress non-error output', false);
 

@@ -18,6 +18,7 @@ describe('pnpmExport integration', () => {
     await runPnpmExport({
       cwd: path.join(repo, 'packages/api'),
       output,
+      lockfile: true,
     });
 
     expect(await listFiles(output)).toEqual([

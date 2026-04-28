@@ -10,6 +10,10 @@ export async function makePackageLockFile(app: App): Promise<void> {
     return;
   }
 
+  app.logger.warn(
+    '⚠ pnpm-export: package-lock.json generation is experimental and may produce an incomplete lockfile.',
+  );
+
   const pnpmLock = await readPnpmLock(app);
   const context = createLockContext(app, pnpmLock);
   walkLockClosure(context);

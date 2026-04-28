@@ -35,7 +35,7 @@ describe('cli', () => {
       stderr: expect.stringContaining('output directory'),
     });
     expect(commandError).toMatchObject({
-      stderr: expect.stringContaining('--no-lockfile'),
+      stderr: expect.stringContaining('--lockfile'),
     });
   });
 
@@ -59,7 +59,7 @@ describe('cli', () => {
     await expect(fs.access(output)).rejects.toThrow();
   });
 
-  it('emits package-lock.json by default', async () => {
+  it('does not emit package-lock.json by default', async () => {
     const repo = await makeTempFixtureCopy('basic-monorepo');
     const output = await makeTempOutputDir();
 
@@ -69,29 +69,29 @@ describe('cli', () => {
       path.join(repo, 'packages/api'),
       '-o',
       output,
-    ]);
-
-    await expect(
-      fs.access(path.join(output, 'package-lock.json')),
-    ).resolves.toBeUndefined();
-  });
-
-  it('skips package-lock.json with --no-lockfile', async () => {
-    const repo = await makeTempFixtureCopy('basic-monorepo');
-    const output = await makeTempOutputDir();
-
-    await execFileAsync('node', [
-      'dist/cli.js',
-      '-C',
-      path.join(repo, 'packages/api'),
-      '-o',
-      output,
-      '--no-lockfile',
     ]);
 
     await expect(
       fs.access(path.join(output, 'package-lock.json')),
     ).rejects.toThrow();
+  });
+
+  it('emits package-lock.json with --lockfile', async () => {
+    const repo = await makeTempFixtureCopy('basic-monorepo');
+    const output = await makeTempOutputDir();
+
+    await execFileAsync('node', [
+      'dist/cli.js',
+      '-C',
+      path.join(repo, 'packages/api'),
+      '-o',
+      output,
+      '--lockfile',
+    ]);
+
+    await expect(
+      fs.access(path.join(output, 'package-lock.json')),
+    ).resolves.toBeUndefined();
   });
 
   it('includes dev dependencies when -D is passed', async () => {
@@ -105,7 +105,6 @@ describe('cli', () => {
       '-o',
       output,
       '-D',
-      '--no-lockfile',
     ]);
 
     await expect(
