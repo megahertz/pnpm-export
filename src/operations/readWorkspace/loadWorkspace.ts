@@ -19,6 +19,7 @@ export async function loadWorkspace(app: App): Promise<void> {
   const packages = await enumerateWorkspacePackages(
     workspaceRoot,
     workspaceYaml.packages,
+    app.logger,
   );
   app.setWorkspace(
     new Workspace({

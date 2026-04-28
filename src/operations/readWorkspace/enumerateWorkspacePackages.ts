@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import type { PackageJsonData } from '../../core/types.ts';
+import type { Logger, PackageJsonData } from '../../core/types.ts';
 import { WorkspacePackage } from '../../core/WorkspacePackage.ts';
 import { pathExists } from '../../utils/fs.ts';
 import { workspaceGlob } from '../../utils/glob.ts';
@@ -9,6 +9,7 @@ import { readJson } from '../../utils/json.ts';
 export async function enumerateWorkspacePackages(
   workspaceRoot: string,
   patterns: string[],
+  logger: Logger,
 ): Promise<Map<string, WorkspacePackage>> {
   const packageDirs = await workspaceGlob(patterns, workspaceRoot);
   const packages = new Map<string, WorkspacePackage>();
@@ -36,7 +37,7 @@ export async function enumerateWorkspacePackages(
     }
     const existing = packages.get(pkg.name);
     if (existing) {
-      console.warn(
+      logger.warn(
         `⚠ pnpm-export: Duplicate workspace package name \`${pkg.name}\` at \`${existing.dir}\` and \`${pkg.dir}\`. The latter will be ignored.`,
       );
       continue;

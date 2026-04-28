@@ -1,8 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { describe, expect, it, vi } from 'vitest';
-import { App, Config, makeDependencies, pnpmExport } from '../src/index.ts';
-import type { ConfigOptions, PackageJsonData } from '../src/index.ts';
+import { describe, expect, it } from 'vitest';
+import { App, Config, pnpmExport } from '../src/index.ts';
+import type { ConfigOptions, Logger, PackageJsonData } from '../src/index.ts';
 import {
   listFiles,
   makeTempFixtureCopy,
@@ -96,9 +96,8 @@ describe('pnpmExport integration', () => {
   it('resolves default and named catalogs while warning on per-package catalog overrides', async () => {
     const repo = await makeTempFixtureCopy('with-catalogs');
     const output = await makeTempOutputDir();
-    const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await runPnpmExport({
+    const logger = await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
       lockfile: false,
@@ -112,8 +111,7 @@ describe('pnpmExport integration', () => {
       react: '^19.0.0',
     });
     expect(root.pnpm).toBeUndefined();
-    expect(warn.mock.calls.join('\n')).toContain('per-package pnpm.catalog');
-    warn.mockRestore();
+    expect(logger.warnings.join('\n')).toContain('per-package pnpm.catalog');
   });
 
   it('follows peer and optional workspace dependency edges by default', async () => {
@@ -187,9 +185,8 @@ describe('pnpmExport integration', () => {
   it('translates overrides and warns about pnpm nested overrides', async () => {
     const repo = await makeTempFixtureCopy('with-overrides');
     const output = await makeTempOutputDir();
-    const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await runPnpmExport({
+    const logger = await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
       lockfile: false,
@@ -202,16 +199,14 @@ describe('pnpmExport integration', () => {
       'foo': '2.0.0',
       'from-workspace-yaml': '1.0.0',
     });
-    expect(warn.mock.calls.join('\n')).toContain('foo>bar');
-    warn.mockRestore();
+    expect(logger.warnings.join('\n')).toContain('foo>bar');
   });
 
   it('copies patches in try-replace mode and mutates the root install script', async () => {
     const repo = await makeTempFixtureCopy('with-patches');
     const output = await makeTempOutputDir();
-    const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await runPnpmExport({
+    const logger = await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
       lockfile: false,
@@ -228,25 +223,23 @@ describe('pnpmExport integration', () => {
     expect(
       await fileExists(path.join(output, 'patches/left-pad+1.3.0.patch')),
     ).toBe(true);
-    expect(warn.mock.calls.join('\n')).toContain(
+    expect(logger.warnings.join('\n')).toContain(
       'Applied 1 patches via patch-package postinstall.',
     );
-    warn.mockRestore();
   });
 
   it('supports patch warning and ignore modes without copying patch files', async () => {
     const warningRepo = await makeTempFixtureCopy('with-patches');
     const warningOutput = await makeTempOutputDir();
-    const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await runPnpmExport({
+    const logger = await runPnpmExport({
       cwd: path.join(warningRepo, 'packages/app'),
       output: warningOutput,
       patchDependencies: 'warning',
       lockfile: false,
     });
 
-    expect(warn.mock.calls.join('\n')).toContain(
+    expect(logger.warnings.join('\n')).toContain(
       'stripped pnpm.patchedDependencies',
     );
     expect(
@@ -266,21 +259,18 @@ describe('pnpmExport integration', () => {
     expect(
       await fileExists(path.join(ignoreOutput, 'patches/left-pad+1.3.0.patch')),
     ).toBe(false);
-    warn.mockRestore();
   });
 
   it('warns when declared build output is missing', async () => {
     const repo = await makeTempFixtureCopy('missing-build-output');
     const output = await makeTempOutputDir();
-    const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await runPnpmExport({
+    const logger = await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
     });
 
-    expect(warn.mock.calls.join('\n')).toContain('Did you forget to build?');
-    warn.mockRestore();
+    expect(logger.warnings.join('\n')).toContain('Did you forget to build?');
   });
 
   it('exports when the source package is the workspace root', async () => {
@@ -379,7 +369,6 @@ describe('pnpmExport integration', () => {
   it('strips pnpm specific fields and packageManager from manifests', async () => {
     const repo = await makeTempFixtureCopy('with-catalogs');
     const output = await makeTempOutputDir();
-    const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const appPkgPath = path.join(repo, 'packages/app/package.json');
     const appPkg = await readJson<PackageJsonData>(appPkgPath);
@@ -402,8 +391,6 @@ describe('pnpmExport integration', () => {
     expect(root.workspaces).toBeUndefined();
     expect(root.pnpm).toBeUndefined();
     expect(root.publishConfig).toEqual({ access: 'public' });
-
-    warn.mockRestore();
   });
 
   it('rewrites different workspace specifier variations', async () => {
@@ -471,32 +458,29 @@ describe('pnpmExport integration', () => {
   it('warns and proceeds when encountering duplicate workspace packages', async () => {
     const repo = await makeTempFixtureCopy('duplicate-workspace');
     const output = await makeTempOutputDir();
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    await runPnpmExport({
+    const logger = await runPnpmExport({
       cwd: path.join(repo, 'packages/app1'),
       output,
       lockfile: false,
     });
 
-    expect(warn).toHaveBeenCalledWith(
+    expect(logger.warnings).toContainEqual(
       expect.stringContaining('Duplicate workspace package name `dup-app`'),
     );
-    warn.mockRestore();
   });
 
   it('warns and only locks one version when a dependency is locked to multiple versions', async () => {
     const repo = await makeTempFixtureCopy('multiple-versions');
     const output = await makeTempOutputDir();
-    const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    await runPnpmExport({
+    const logger = await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
       lockfile: true,
     });
 
-    expect(warn).toHaveBeenCalledWith(
+    expect(logger.warnings).toContainEqual(
       expect.stringContaining(
         'is locked to multiple versions. package-lock.json will only lock one version',
       ),
@@ -508,7 +492,6 @@ describe('pnpmExport integration', () => {
     expect((lockfile as Record<string, unknown>).packages).toHaveProperty(
       'node_modules/baz',
     );
-    warn.mockRestore();
   });
 
   it('skips missing patch-package in lockfile without crashing', async () => {
@@ -548,12 +531,32 @@ describe('pnpmExport integration', () => {
   });
 });
 
-async function runPnpmExport(options: ConfigOptions): Promise<void> {
+async function runPnpmExport(options: ConfigOptions): Promise<TestLogger> {
   const config = new Config(options);
-  const deps = makeDependencies({ config });
+  const logger = new TestLogger();
+  const deps = { config, logger };
   const app = new App({ deps });
 
   await pnpmExport(app);
+  return logger;
+}
+
+class TestLogger implements Logger {
+  readonly warnings: string[] = [];
+
+  get warningCount(): number {
+    return this.warnings.length;
+  }
+
+  debug(): void {}
+
+  error(): void {}
+
+  info(): void {}
+
+  warn(message: string): void {
+    this.warnings.push(message);
+  }
 }
 
 async function fileExists(filePath: string): Promise<boolean> {
