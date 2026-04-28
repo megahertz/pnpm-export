@@ -1,5 +1,8 @@
 # pnpm-export
 
+[![Tests](https://github.com/megahertz/pnpm-export/actions/workflows/check.yml/badge.svg)](https://github.com/megahertz/pnpm-export/actions/workflows/check.yml)
+[![NPM version](https://badge.fury.io/js/pnpm-export.svg)](https://badge.fury.io/js/pnpm-export)
+
 `pnpm-export` exports one package from a pnpm workspace into a self-contained
 directory whose manifests use npm-compatible specifiers and whose
 `package-lock.json` is generated from `pnpm-lock.yaml`.
