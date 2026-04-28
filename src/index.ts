@@ -31,6 +31,8 @@ export type {
   Dependencies,
   DepKind,
   Logger,
+  PackageLockData,
+  PackageLockPackage,
   PackageJsonData,
   PnpmLock,
   WorkspaceYaml,

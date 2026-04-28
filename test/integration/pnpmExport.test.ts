@@ -16,6 +16,7 @@ describe('pnpmExport integration', () => {
     });
 
     expect(await listFiles(output)).toEqual([
+      'package-lock.json',
       'package.json',
       'packages/lib/index.js',
       'packages/lib/package.json',
@@ -31,9 +32,33 @@ describe('pnpmExport integration', () => {
       shared: 'file:./packages/shared',
     });
     expect(root.devDependencies).toEqual({ eslint: '^9.0.0' });
-    expect(await fileExists(path.join(output, 'package-lock.json'))).toBe(
-      false,
+    const lockfile = await readJson<Record<string, unknown>>(
+      path.join(output, 'package-lock.json'),
     );
+    expect(lockfile).toMatchObject({
+      name: 'api',
+      lockfileVersion: 3,
+      packages: {
+        '': {
+          name: 'api',
+          dependencies: {
+            zod: '^4.0.0',
+            shared: 'file:./packages/shared',
+          },
+          devDependencies: {
+            eslint: '^9.0.0',
+          },
+        },
+        'node_modules/shared': {
+          resolved: 'packages/shared',
+          link: true,
+        },
+        'node_modules/zod': {
+          version: '4.0.0',
+          integrity: 'sha512-zod-fixture',
+        },
+      },
+    });
 
     const shared = await readJson<PackageJsonData>(
       path.join(output, 'packages/shared/package.json'),
@@ -48,6 +73,7 @@ describe('pnpmExport integration', () => {
     await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
+      lockfile: false,
     });
 
     expect(await listFiles(output)).toContain(
@@ -69,6 +95,7 @@ describe('pnpmExport integration', () => {
     await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
+      lockfile: false,
     });
 
     const root = await readJson<PackageJsonData>(
@@ -89,6 +116,7 @@ describe('pnpmExport integration', () => {
     await runPnpmExport({
       cwd: path.join(peerRepo, 'packages/app'),
       output: peerOutput,
+      lockfile: false,
     });
     expect(await listFiles(peerOutput)).toContain(
       'packages/plugin/package.json',
@@ -99,6 +127,7 @@ describe('pnpmExport integration', () => {
     await runPnpmExport({
       cwd: path.join(optionalRepo, 'packages/app'),
       output: optionalOutput,
+      lockfile: false,
     });
     expect(await listFiles(optionalOutput)).toContain(
       'packages/optional-plugin/package.json',
@@ -119,6 +148,7 @@ describe('pnpmExport integration', () => {
       cwd: path.join(repo, 'packages/app'),
       output,
       peerDependencies: false,
+      lockfile: false,
     });
 
     const root = await readJson<PackageJsonData>(
@@ -137,6 +167,7 @@ describe('pnpmExport integration', () => {
     await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
+      lockfile: false,
     });
 
     const files = await listFiles(output);
@@ -155,6 +186,7 @@ describe('pnpmExport integration', () => {
     await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
+      lockfile: false,
     });
 
     const root = await readJson<PackageJsonData>(
@@ -176,6 +208,7 @@ describe('pnpmExport integration', () => {
     await runPnpmExport({
       cwd: path.join(repo, 'packages/app'),
       output,
+      lockfile: false,
     });
 
     const root = await readJson<PackageJsonData>(
@@ -204,6 +237,7 @@ describe('pnpmExport integration', () => {
       cwd: path.join(warningRepo, 'packages/app'),
       output: warningOutput,
       patchDependencies: 'warning',
+      lockfile: false,
     });
 
     expect(warn.mock.calls.join('\n')).toContain(
@@ -221,6 +255,7 @@ describe('pnpmExport integration', () => {
       cwd: path.join(ignoreRepo, 'packages/app'),
       output: ignoreOutput,
       patchDependencies: 'ignore',
+      lockfile: false,
     });
     expect(
       await fileExists(path.join(ignoreOutput, 'patches/left-pad+1.3.0.patch')),

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { Command, InvalidArgumentError } from 'commander';
+import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import { App } from './core/App.ts';
 import { Config } from './core/Config.ts';
@@ -17,6 +18,14 @@ const program = new Command()
   .description('Export one package from a pnpm workspace for npm install.')
   .version(packageJson.version)
   .showHelpAfterError()
+  .configureOutput({
+    writeErr: (value: string) => {
+      fs.writeSync(2, value);
+    },
+    writeOut: (value: string) => {
+      fs.writeSync(1, value);
+    },
+  })
   .option('-C, --cwd <dir>', 'source package directory')
   .requiredOption('-o, --output <dir>', 'output directory')
   .option(
@@ -60,7 +69,7 @@ const program = new Command()
     'try-replace',
   )
   .option('--clean', 'wipe output directory contents before writing', false)
-  .option('--lockfile', 'reserved; not implemented in v1', false)
+  .option('--no-lockfile', 'do not emit package-lock.json')
   .option('--dry-run', 'print planned actions without writing', false)
   .option('-v, --verbose', 'debug logging', false);
 

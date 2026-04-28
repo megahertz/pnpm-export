@@ -38,6 +38,37 @@ export interface PackageJsonData {
   [key: string]: unknown;
 }
 
+export interface PackageLockData {
+  name?: string;
+  version?: string;
+  lockfileVersion: 3;
+  requires: true;
+  packages: Record<string, PackageLockPackage>;
+}
+
+export interface PackageLockPackage {
+  name?: string;
+  version?: string;
+  resolved?: string;
+  integrity?: string;
+  link?: true;
+  dev?: true;
+  optional?: true;
+  devOptional?: true;
+  dependencies?: DependencyMap;
+  devDependencies?: DependencyMap;
+  peerDependencies?: DependencyMap;
+  optionalDependencies?: DependencyMap;
+  peerDependenciesMeta?: Record<string, unknown>;
+  optionalDependenciesMeta?: Record<string, unknown>;
+  bin?: string | Record<string, string>;
+  engines?: Record<string, string>;
+  cpu?: string[];
+  os?: string[];
+  libc?: string[];
+  hasInstallScript?: boolean;
+}
+
 export interface WorkspaceYaml {
   packages: string[];
   catalog: Record<string, string>;
@@ -89,6 +120,51 @@ export interface Dependencies {
   logger: Logger;
 }
 
+export interface PnpmLockDependency {
+  specifier?: string;
+  version?: string;
+}
+
+export interface PnpmLockImporter {
+  dependencies?: Record<string, PnpmLockDependency | string>;
+  devDependencies?: Record<string, PnpmLockDependency | string>;
+  optionalDependencies?: Record<string, PnpmLockDependency | string>;
+  peerDependencies?: Record<string, PnpmLockDependency | string>;
+  [key: string]: unknown;
+}
+
+export interface PnpmLockPackage {
+  resolution?: {
+    integrity?: string;
+    tarball?: string;
+    [key: string]: unknown;
+  };
+  dependencies?: DependencyMap;
+  optionalDependencies?: DependencyMap;
+  peerDependencies?: DependencyMap;
+  peerDependenciesMeta?: Record<string, unknown>;
+  engines?: Record<string, string>;
+  bin?: string | Record<string, string>;
+  cpu?: string[];
+  os?: string[];
+  libc?: string[];
+  hasBin?: boolean;
+  requiresBuild?: boolean;
+  [key: string]: unknown;
+}
+
+export interface PnpmLockSnapshot {
+  dependencies?: DependencyMap;
+  optionalDependencies?: DependencyMap;
+  transitivePeerDependencies?: string[];
+  optional?: boolean;
+  [key: string]: unknown;
+}
+
 export interface PnpmLock {
+  lockfileVersion?: string | number;
+  importers?: Record<string, PnpmLockImporter>;
+  packages?: Record<string, PnpmLockPackage>;
+  snapshots?: Record<string, PnpmLockSnapshot>;
   [key: string]: unknown;
 }

@@ -1,8 +1,8 @@
 # pnpm-export
 
 `pnpm-export` exports one package from a pnpm workspace into a self-contained
-directory whose manifests use npm-compatible specifiers. v1 intentionally does
-not emit a lockfile; run `npm install` in the generated output directory.
+directory whose manifests use npm-compatible specifiers and whose
+`package-lock.json` is generated from `pnpm-lock.yaml` by default.
 
 ```sh
 pnpm-export -C packages/api --output /tmp/api
@@ -43,7 +43,7 @@ Options:
                                try-replace (default: "try-replace")
   --clean                      wipe output directory contents before writing
                                (default: false)
-  --lockfile                   reserved; not implemented in v1 (default: false)
+  --no-lockfile                do not emit package-lock.json
   --dry-run                    print planned actions without writing (default:
                                false)
   -v, --verbose                debug logging (default: false)
@@ -81,9 +81,8 @@ GitHub Actions:
 
 ## Limitations
 
-v1 has no generated `package-lock.json`
-([tracking: lockfile generation](./.ai/plan.md#phase-8--package-lockjson-generation-deferred)),
-no `--build` hook
+Lockfile generation requires enough data in `pnpm-lock.yaml` to resolve exported
+external dependencies; pass `--no-lockfile` to skip it. v1 has no `--build` hook
 ([tracking: future build flag](./.ai/plan.md#phase-11--future--nice-to-have)),
 no Windows support
 ([tracking: Windows support](./.ai/plan.md#phase-11--future--nice-to-have)), and

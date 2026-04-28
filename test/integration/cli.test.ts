@@ -34,6 +34,9 @@ describe('cli', () => {
     expect(commandError).toMatchObject({
       stderr: expect.stringContaining('output directory'),
     });
+    expect(commandError).toMatchObject({
+      stderr: expect.stringContaining('--no-lockfile'),
+    });
   });
 
   it('prints a dry-run tree and writes nothing', async () => {
@@ -56,23 +59,39 @@ describe('cli', () => {
     await expect(fs.access(output)).rejects.toThrow();
   });
 
-  it('errors on --lockfile in v1', async () => {
+  it('emits package-lock.json by default', async () => {
     const repo = await copyFixture('basic-monorepo');
     const output = await freshOutput();
 
+    await execFileAsync('node', [
+      'dist/cli.js',
+      '-C',
+      path.join(repo, 'packages/api'),
+      '-o',
+      output,
+    ]);
+
     await expect(
-      execFileAsync('node', [
-        'dist/cli.js',
-        '-C',
-        path.join(repo, 'packages/api'),
-        '-o',
-        output,
-        '--lockfile',
-      ]),
-    ).rejects.toMatchObject({
-      code: 1,
-      stderr: expect.stringContaining('--lockfile is not implemented in v1'),
-    });
+      fs.access(path.join(output, 'package-lock.json')),
+    ).resolves.toBeUndefined();
+  });
+
+  it('skips package-lock.json with --no-lockfile', async () => {
+    const repo = await copyFixture('basic-monorepo');
+    const output = await freshOutput();
+
+    await execFileAsync('node', [
+      'dist/cli.js',
+      '-C',
+      path.join(repo, 'packages/api'),
+      '-o',
+      output,
+      '--no-lockfile',
+    ]);
+
+    await expect(
+      fs.access(path.join(output, 'package-lock.json')),
+    ).rejects.toThrow();
   });
 });
 

@@ -46,8 +46,8 @@ It should create the following structure:
 |-- package.json
 ```
 
-(v1 does not emit `package-lock.json`; the consumer runs `npm install` in the
-output directory. Lockfile generation is a v2 goal; see Phase 8 of `plan.md`.)
+It emits `package-lock.json` by default from `pnpm-lock.yaml`; pass
+`--no-lockfile` to skip lockfile generation.
 
 The exported `package.json` should become:
 
@@ -68,8 +68,7 @@ The `devDependencies` object is empty because we did not pass the `-D` or
 `--dev-dependencies` flag, so workspace dev dependencies were removed. Also note
 that `lib` is copied because it is a workspace dependency of `shared`. The
 `package.json` for `shared` should also be updated to point to local packages.
-`package-lock.json` should be generated from information in `pnpm-lock.yaml`,
-but v1 skips this (see Phase 8 of `plan.md`).
+`package-lock.json` is generated from information in `pnpm-lock.yaml`.
 
 This module is similar to `pnpm pack` or `pnpm deploy`, but more flexible. It
 allows any package to be exported for tasks such as deployment to Google App

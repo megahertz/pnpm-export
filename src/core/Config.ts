@@ -42,19 +42,13 @@ export class Config {
     this.includePeerDependencies = opts.peerDependencies !== false;
     this.includeOptionalDependencies = opts.optionalDependencies !== false;
     this.clean = Boolean(opts.clean);
-    this.lockfile = Boolean(opts.lockfile);
+    this.lockfile = opts.lockfile !== false;
     this.dryRun = Boolean(opts.dryRun);
     this.verbose = Boolean(opts.verbose);
     this.patchDependencies =
       typeof opts.patchDependencies === 'string'
         ? opts.patchDependencies
         : 'try-replace';
-
-    if (this.lockfile) {
-      throw new UserError(
-        '--lockfile is not implemented in v1; the output dir has no package-lock.json. See Phase 8.',
-      );
-    }
 
     if (!PATCH_MODES.has(this.patchDependencies)) {
       throw new UserError(

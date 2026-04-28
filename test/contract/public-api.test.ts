@@ -23,4 +23,11 @@ describe('public API contract', () => {
       expect(api).toHaveProperty(key);
     }
   });
+
+  it('exports lockfile-related public types', () => {
+    expectTypeExport<api.PackageLockData>();
+    expectTypeExport<api.PackageLockPackage>();
+  });
 });
+
+function expectTypeExport<_T>(): void {}
