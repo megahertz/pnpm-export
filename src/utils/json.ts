@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 
 export async function readJson<T>(filePath: string): Promise<T> {
   const contents = await fs.readFile(filePath, 'utf8');
-  return JSON.parse(contents) as T;
+  return JSON.parse(contents.replace(/^\uFEFF/, '')) as T;
 }
 
 export async function writeJson(

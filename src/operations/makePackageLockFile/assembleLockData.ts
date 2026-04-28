@@ -1,4 +1,3 @@
-import { UserError } from '../../core/errors.ts';
 import type { PackageLockData, PackageLockPackage } from '../../core/types.ts';
 import { externalPackageEntry } from './externalEntries.ts';
 import {
@@ -43,9 +42,10 @@ export function assembleLockData(context: LockContext): PackageLockData {
     const entryPath = nodeModulesPath(external.name);
     const existing = externalNodePaths.get(entryPath);
     if (existing && existing !== external.snapshotKey) {
-      throw new UserError(
-        `Cannot generate package-lock.json because \`${external.name}\` is locked to multiple versions. Pass --no-lockfile to skip lockfile generation`,
+      context.app.logger.warn(
+        `⚠ pnpm-export: \`${external.name}\` is locked to multiple versions. package-lock.json will only lock one version and rely on npm to resolve the rest.`,
       );
+      continue;
     }
     externalNodePaths.set(entryPath, external.snapshotKey);
     packages[entryPath] = externalPackageEntry(context, external);

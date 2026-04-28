@@ -452,6 +452,89 @@ describe('pnpmExport integration', () => {
     });
   });
 
+  it('handles BOM in package.json files gracefully', async () => {
+    const repo = await makeTempFixtureCopy('bom-json');
+    const output = await makeTempOutputDir();
+
+    await runPnpmExport({
+      cwd: path.join(repo, 'packages/app'),
+      output,
+      lockfile: false,
+    });
+
+    const root = await readJson<PackageJsonData>(
+      path.join(output, 'package.json'),
+    );
+    expect(root.name).toBe('bom-app');
+  });
+
+  it('warns and proceeds when encountering duplicate workspace packages', async () => {
+    const repo = await makeTempFixtureCopy('duplicate-workspace');
+    const output = await makeTempOutputDir();
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    await runPnpmExport({
+      cwd: path.join(repo, 'packages/app1'),
+      output,
+      lockfile: false,
+    });
+
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining('Duplicate workspace package name `dup-app`'),
+    );
+    warn.mockRestore();
+  });
+
+  it('warns and only locks one version when a dependency is locked to multiple versions', async () => {
+    const repo = await makeTempFixtureCopy('multiple-versions');
+    const output = await makeTempOutputDir();
+    const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await runPnpmExport({
+      cwd: path.join(repo, 'packages/app'),
+      output,
+      lockfile: true,
+    });
+
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining(
+        'is locked to multiple versions. package-lock.json will only lock one version',
+      ),
+    );
+
+    const lockfile = await readJson<Record<string, unknown>>(
+      path.join(output, 'package-lock.json'),
+    );
+    expect((lockfile as Record<string, unknown>).packages).toHaveProperty(
+      'node_modules/baz',
+    );
+    warn.mockRestore();
+  });
+
+  it('skips missing patch-package in lockfile without crashing', async () => {
+    const repo = await makeTempFixtureCopy('basic-monorepo');
+    const output = await makeTempOutputDir();
+
+    // Inject a fake patch-package dependency that's not in pnpm-lock.yaml
+    const appPkgPath = path.join(repo, 'packages/api/package.json');
+    const appPkg = await readJson<PackageJsonData>(appPkgPath);
+    appPkg.dependencies = { ...appPkg.dependencies, 'patch-package': '^8.0.0' };
+    await fs.writeFile(appPkgPath, JSON.stringify(appPkg, undefined, 2));
+
+    await runPnpmExport({
+      cwd: path.join(repo, 'packages/api'),
+      output,
+      lockfile: true,
+    });
+
+    const lockfile = await readJson<Record<string, unknown>>(
+      path.join(output, 'package-lock.json'),
+    );
+    expect((lockfile as Record<string, unknown>).packages).not.toHaveProperty(
+      'node_modules/patch-package',
+    );
+  });
+
   it('errors for self-references', async () => {
     const repo = await makeTempFixtureCopy('cyclic');
     const output = await makeTempOutputDir();

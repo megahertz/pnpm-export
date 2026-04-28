@@ -4,8 +4,11 @@ import path from 'node:path';
 
 export type FixtureName =
   | 'basic-monorepo'
+  | 'bom-json'
   | 'cyclic'
+  | 'duplicate-workspace'
   | 'missing-build-output'
+  | 'multiple-versions'
   | 'private-vs-public'
   | 'scoped'
   | 'source-is-workspace-root'

@@ -127,7 +127,9 @@ function processWorkspacePackage(
         depName,
         specifier,
       );
-      markExternal(context, depName, snapshotKey, childFlags);
+      if (snapshotKey) {
+        markExternal(context, depName, snapshotKey, childFlags);
+      }
     }
   }
 
@@ -193,7 +195,7 @@ function resolveDirectSnapshotKey(
   field: DepKind,
   depName: string,
   specifier: string,
-): string {
+): string | undefined {
   const importer = importerFor(context, pkg);
   const version = findImporterDependencyVersion(importer, field, depName);
   const fromImporter = version
@@ -206,6 +208,10 @@ function resolveDirectSnapshotKey(
   const fromPackages = findPackageKeyByName(context.pnpmLock, depName);
   if (fromPackages) {
     return fromPackages;
+  }
+
+  if (depName === 'patch-package') {
+    return undefined;
   }
 
   const lockfileHint = context.pnpmLock

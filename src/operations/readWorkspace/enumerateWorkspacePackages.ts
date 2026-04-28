@@ -1,6 +1,5 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { UserError } from '../../core/errors.ts';
 import type { PackageJsonData } from '../../core/types.ts';
 import { WorkspacePackage } from '../../core/WorkspacePackage.ts';
 import { pathExists } from '../../utils/fs.ts';
@@ -37,9 +36,10 @@ export async function enumerateWorkspacePackages(
     }
     const existing = packages.get(pkg.name);
     if (existing) {
-      throw new UserError(
-        `Duplicate workspace package name \`${pkg.name}\` at \`${existing.dir}\` and \`${pkg.dir}\``,
+      console.warn(
+        `⚠ pnpm-export: Duplicate workspace package name \`${pkg.name}\` at \`${existing.dir}\` and \`${pkg.dir}\`. The latter will be ignored.`,
       );
+      continue;
     }
     packages.set(pkg.name, pkg);
   }
