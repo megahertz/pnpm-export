@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { tempDir } from '../../../tests/helpers.ts';
 import { App } from '../../core/App.ts';
 import { Config } from '../../core/Config.ts';
-import type { Dependencies, Logger } from '../../core/types.ts';
+import type { ConfigOptions, Dependencies, Logger } from '../../core/types.ts';
 import { Workspace } from '../../core/Workspace.ts';
 import { WorkspacePackage } from '../../core/WorkspacePackage.ts';
 import { findWorkspaceRoot } from '../readWorkspace/index.ts';
@@ -26,12 +26,25 @@ describe('resolveDependencies', () => {
     expect(app.requireExported().members).toEqual(new Set([b, c]));
   });
 
-  it('respects dev dependency flag recursively', async () => {
+  it('walks dev dependency edges by default', async () => {
     const root = pkg('a', '/repo/packages/a', {
       devDependencies: { b: 'workspace:*' },
     });
     const b = pkg('b', '/repo/packages/b');
     const app = makeApp('/repo/packages/a', root, [b]);
+
+    await resolveDependencies(app);
+    expect(app.requireExported().members).toEqual(new Set([b]));
+  });
+
+  it('skips dev dependency edges when disabled', async () => {
+    const root = pkg('a', '/repo/packages/a', {
+      devDependencies: { b: 'workspace:*' },
+    });
+    const b = pkg('b', '/repo/packages/b');
+    const app = makeApp('/repo/packages/a', root, [b], {
+      devDependencies: false,
+    });
 
     await resolveDependencies(app);
     expect(app.requireExported().members.size).toBe(0);
@@ -57,8 +70,13 @@ function makeApp(
   _cwd: string,
   source: WorkspacePackage,
   packages: WorkspacePackage[],
+  options: Partial<ConfigOptions> = {},
 ): App {
-  const config = new Config({ cwd: process.cwd(), output: '/tmp/out' });
+  const config = new Config({
+    cwd: process.cwd(),
+    output: '/tmp/out',
+    ...options,
+  });
   const logger: Logger = {
     info() {},
     warn() {},

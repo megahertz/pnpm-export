@@ -28,28 +28,22 @@ const program = new Command()
   })
   .option('-C, --cwd <dir>', 'source package directory')
   .requiredOption('-o, --output <dir>', 'output directory')
-  .option(
-    '-D, --dev-dependencies',
-    'include workspace dev deps in closure',
-    false,
-  )
+  .option('-D, --dev-dependencies', 'Follow "workspace:" devDependencies', true)
+  .option('--no-dev-dependencies', 'Skip "workspace:" devDependencies')
   .option(
     '-P, --peer-dependencies',
-    'follow peerDependencies workspace edges',
+    'Follow "workspace:" peerDependencies',
     true,
   )
-  .option(
-    '--no-peer-dependencies',
-    'do not follow peerDependencies workspace edges',
-  )
+  .option('--no-peer-dependencies', 'Skip "workspace:" peerDependencies')
   .option(
     '-O, --optional-dependencies',
-    'follow optionalDependencies workspace edges',
+    'Follow "workspace:" optionalDependencies',
     true,
   )
   .option(
     '--no-optional-dependencies',
-    'do not follow optionalDependencies workspace edges',
+    'Skip "workspace:" optionalDependencies',
   )
   .option(
     '--patch-dependencies <mode>',

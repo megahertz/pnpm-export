@@ -2,10 +2,10 @@
 
 `pnpm-export` exports one package from a pnpm workspace into a self-contained
 directory whose manifests use npm-compatible specifiers and whose
-`package-lock.json` is generated from `pnpm-lock.yaml` by default.
+`package-lock.json` is generated from `pnpm-lock.yaml`.
 
 ```sh
-pnpm-export -C packages/api --output /tmp/api
+pnpm-export --cwd packages/api --output /tmp/api
 cd /tmp/api
 npm install
 ```
@@ -30,20 +30,21 @@ Options:
   -v, --version                output the version number
   -C, --cwd <dir>              source package directory
   -o, --output <dir>           output directory
-  -D, --dev-dependencies       include workspace dev deps in closure (default:
-                               false)
-  -P, --peer-dependencies      follow peerDependencies workspace edges (default:
+  -D, --dev-dependencies       Follow "workspace:" devDependencies (default:
                                true)
-  --no-peer-dependencies       do not follow peerDependencies workspace edges
-  -O, --optional-dependencies  follow optionalDependencies workspace edges
+  --no-dev-dependencies        Skip "workspace:" devDependencies
+  -P, --peer-dependencies      Follow "workspace:" peerDependencies (default:
+                               true)
+  --no-peer-dependencies       Skip "workspace:" peerDependencies
+  -O, --optional-dependencies  Follow "workspace:" optionalDependencies
                                (default: true)
-  --no-optional-dependencies   do not follow optionalDependencies workspace
-                               edges
+  --no-optional-dependencies   Skip "workspace:" optionalDependencies
   --patch-dependencies <mode>  patch dependency handling: ignore | warning |
                                try-replace (default: "try-replace")
   --clean                      wipe output directory contents before writing
                                (default: false)
-  --no-lockfile                do not emit package-lock.json
+  --lockfile                   emit package-lock.json (experimental) (default:
+                               false)
   --dry-run                    print planned actions without writing (default:
                                false)
   --silent                     suppress non-error output (default: false)

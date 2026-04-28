@@ -33,7 +33,7 @@ export class Config {
 
     this.cwd = path.resolve(invocationCwd, cwd);
     this.output = path.resolve(invocationCwd, output);
-    this.includeDevDependencies = Boolean(options.devDependencies);
+    this.includeDevDependencies = options.devDependencies !== false;
     this.includePeerDependencies = options.peerDependencies !== false;
     this.includeOptionalDependencies = options.optionalDependencies !== false;
     this.clean = Boolean(options.clean);

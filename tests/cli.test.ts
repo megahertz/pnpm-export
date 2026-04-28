@@ -54,7 +54,7 @@ describe('cli', () => {
 
     expect(result.stdout).toContain('api -> ./');
     expect(result.stdout).toContain(
-      'Would copy 3 packages, rewrite 3 manifests, emit 0 warnings.',
+      'Would copy 4 packages, rewrite 4 manifests, emit 0 warnings.',
     );
     await expect(fs.access(output)).rejects.toThrow();
   });
@@ -94,7 +94,7 @@ describe('cli', () => {
     ).resolves.toBeUndefined();
   });
 
-  it('includes dev dependencies when -D is passed', async () => {
+  it('includes dev dependencies by default', async () => {
     const repo = await makeTempFixtureCopy('basic-monorepo');
     const output = await makeTempOutputDir();
 
@@ -104,11 +104,28 @@ describe('cli', () => {
       path.join(repo, 'packages/api'),
       '-o',
       output,
-      '-D',
     ]);
 
     await expect(
       fs.access(path.join(output, 'packages/dev-config/package.json')),
     ).resolves.toBeUndefined();
+  });
+
+  it('skips dev dependencies when --no-dev-dependencies is passed', async () => {
+    const repo = await makeTempFixtureCopy('basic-monorepo');
+    const output = await makeTempOutputDir();
+
+    await execFileAsync('node', [
+      'dist/cli.js',
+      '-C',
+      path.join(repo, 'packages/api'),
+      '-o',
+      output,
+      '--no-dev-dependencies',
+    ]);
+
+    await expect(
+      fs.access(path.join(output, 'packages/dev-config/package.json')),
+    ).rejects.toMatchObject({ code: 'ENOENT' });
   });
 });

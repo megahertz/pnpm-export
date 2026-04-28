@@ -24,6 +24,7 @@ describe('pnpmExport integration', () => {
     expect(await listFiles(output)).toEqual([
       'package-lock.json',
       'package.json',
+      'packages/dev-config/package.json',
       'packages/lib/index.js',
       'packages/lib/package.json',
       'packages/shared/package.json',
@@ -37,7 +38,10 @@ describe('pnpmExport integration', () => {
       zod: '^4.0.0',
       shared: 'file:./packages/shared',
     });
-    expect(root.devDependencies).toEqual({ eslint: '^9.0.0' });
+    expect(root.devDependencies).toEqual({
+      'eslint': '^9.0.0',
+      'dev-config': 'file:./packages/dev-config',
+    });
     const lockfile = await readJson<Record<string, unknown>>(
       path.join(output, 'package-lock.json'),
     );
@@ -52,11 +56,16 @@ describe('pnpmExport integration', () => {
             shared: 'file:./packages/shared',
           },
           devDependencies: {
-            eslint: '^9.0.0',
+            'dev-config': 'file:./packages/dev-config',
+            'eslint': '^9.0.0',
           },
         },
         'node_modules/shared': {
           resolved: 'packages/shared',
+          link: true,
+        },
+        'node_modules/dev-config': {
+          resolved: 'packages/dev-config',
           link: true,
         },
         'node_modules/zod': {
@@ -292,14 +301,13 @@ describe('pnpmExport integration', () => {
     });
   });
 
-  it('includes workspace dev dependencies when requested', async () => {
+  it('includes workspace dev dependencies by default', async () => {
     const repo = await makeTempFixtureCopy('basic-monorepo');
     const output = await makeTempOutputDir();
 
     await runPnpmExport({
       cwd: path.join(repo, 'packages/api'),
       output,
-      devDependencies: true,
       lockfile: false,
     });
 
@@ -313,6 +321,26 @@ describe('pnpmExport integration', () => {
       'eslint': '^9.0.0',
       'dev-config': 'file:./packages/dev-config',
     });
+  });
+
+  it('skips workspace dev dependencies when disabled', async () => {
+    const repo = await makeTempFixtureCopy('basic-monorepo');
+    const output = await makeTempOutputDir();
+
+    await runPnpmExport({
+      cwd: path.join(repo, 'packages/api'),
+      output,
+      devDependencies: false,
+      lockfile: false,
+    });
+
+    expect(await listFiles(output)).not.toContain(
+      'packages/dev-config/package.json',
+    );
+    const root = await readJson<PackageJsonData>(
+      path.join(output, 'package.json'),
+    );
+    expect(root.devDependencies).toEqual({ eslint: '^9.0.0' });
   });
 
   it('validates output directory locations', async () => {
