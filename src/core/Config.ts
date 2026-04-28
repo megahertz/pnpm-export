@@ -21,11 +21,11 @@ export class Config {
   readonly silent: boolean;
   readonly patchDependencies: PatchDependenciesMode;
 
-  constructor({ options }: { args?: string[]; options?: ConfigOptions }) {
-    const opts = options ?? {};
+  constructor(options: ConfigOptions = {}) {
     const invocationCwd = process.cwd();
-    const cwd = typeof opts.cwd === 'string' ? opts.cwd : invocationCwd;
-    const output = typeof opts.output === 'string' ? opts.output : undefined;
+    const cwd = typeof options.cwd === 'string' ? options.cwd : invocationCwd;
+    const output =
+      typeof options.output === 'string' ? options.output : undefined;
 
     if (!output) {
       throw new UserError('--output <dir> is required');
@@ -33,16 +33,16 @@ export class Config {
 
     this.cwd = path.resolve(invocationCwd, cwd);
     this.output = path.resolve(invocationCwd, output);
-    this.includeDevDependencies = Boolean(opts.devDependencies);
-    this.includePeerDependencies = opts.peerDependencies !== false;
-    this.includeOptionalDependencies = opts.optionalDependencies !== false;
-    this.clean = Boolean(opts.clean);
-    this.lockfile = opts.lockfile === true;
-    this.dryRun = Boolean(opts.dryRun);
-    this.silent = Boolean(opts.silent);
+    this.includeDevDependencies = Boolean(options.devDependencies);
+    this.includePeerDependencies = options.peerDependencies !== false;
+    this.includeOptionalDependencies = options.optionalDependencies !== false;
+    this.clean = Boolean(options.clean);
+    this.lockfile = options.lockfile === true;
+    this.dryRun = Boolean(options.dryRun);
+    this.silent = Boolean(options.silent);
     this.patchDependencies =
-      typeof opts.patchDependencies === 'string'
-        ? opts.patchDependencies
+      typeof options.patchDependencies === 'string'
+        ? options.patchDependencies
         : 'try-replace';
 
     if (!PATCH_MODES.has(this.patchDependencies)) {

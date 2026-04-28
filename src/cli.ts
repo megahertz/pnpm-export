@@ -76,7 +76,7 @@ const program = new Command()
 program.parse();
 
 try {
-  const config = new Config({ options: program.opts() });
+  const config = new Config(program.opts());
   const deps = makeDependencies({ config });
   const app = new App({ deps });
 

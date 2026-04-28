@@ -37,7 +37,7 @@ describe('modifyOnePackageJson', () => {
     const result = modifyOnePackageJson(root, {
       workspace,
       exported,
-      config: new Config({ options: { cwd: process.cwd(), output: '/out' } }),
+      config: new Config({ cwd: process.cwd(), output: '/out' }),
       logger: quietLogger(),
     }).toJSON();
 

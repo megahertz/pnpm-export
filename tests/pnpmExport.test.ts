@@ -549,7 +549,7 @@ describe('pnpmExport integration', () => {
 });
 
 async function runPnpmExport(options: ConfigOptions): Promise<void> {
-  const config = new Config({ options });
+  const config = new Config(options);
   const deps = makeDependencies({ config });
   const app = new App({ deps });
 

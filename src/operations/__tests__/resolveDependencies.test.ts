@@ -58,9 +58,7 @@ function makeApp(
   source: WorkspacePackage,
   packages: WorkspacePackage[],
 ): App {
-  const config = new Config({
-    options: { cwd: process.cwd(), output: '/tmp/out' },
-  });
+  const config = new Config({ cwd: process.cwd(), output: '/tmp/out' });
   const logger: Logger = {
     info() {},
     warn() {},

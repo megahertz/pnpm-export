@@ -95,6 +95,7 @@ export type DepKind =
   | 'peerDependencies';
 
 export interface ConfigOptions {
+  args?: string[];
   clean?: boolean;
   cwd?: string;
   devDependencies?: boolean;
