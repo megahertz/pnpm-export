@@ -2,8 +2,6 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { makePackageFilter } from './ignoreFile.ts';
 
-export const CLEAN_MARKER = '.pnpm-export-cleaned';
-
 export async function pathExists(filePath: string): Promise<boolean> {
   try {
     await fs.access(filePath);
@@ -36,11 +34,6 @@ export async function isEmptyDir(dir: string): Promise<boolean> {
   return entries.length === 0;
 }
 
-export async function isMarkerOnlyDir(dir: string): Promise<boolean> {
-  const entries = await listDir(dir);
-  return entries.length === 1 && entries[0] === CLEAN_MARKER;
-}
-
 export async function cleanDirContents(dir: string): Promise<void> {
   await ensureDir(dir);
   const entries = await fs.readdir(dir);
@@ -49,7 +42,6 @@ export async function cleanDirContents(dir: string): Promise<void> {
       fs.rm(path.join(dir, entry), { recursive: true, force: true }),
     ),
   );
-  await fs.writeFile(path.join(dir, CLEAN_MARKER), '');
 }
 
 export async function copyPackage(

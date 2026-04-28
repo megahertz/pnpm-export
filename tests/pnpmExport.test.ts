@@ -330,7 +330,7 @@ describe('pnpmExport integration', () => {
     ).rejects.toThrow('is an existing workspace package');
   });
 
-  it('handles --clean flag properly with existing directories', async () => {
+  it('handles --clean flag by wiping existing directories', async () => {
     const repo = await makeTempFixtureCopy('basic-monorepo');
     const output = await makeTempOutputDir();
 
@@ -345,16 +345,6 @@ describe('pnpmExport integration', () => {
       }),
     ).rejects.toThrow('is non-empty');
 
-    await expect(
-      runPnpmExport({
-        cwd: path.join(repo, 'packages/api'),
-        output,
-        clean: true,
-        lockfile: false,
-      }),
-    ).rejects.toThrow('does not look like a prior pnpm-export output');
-
-    await fs.writeFile(path.join(output, '.pnpm-export-cleaned'), '');
     await runPnpmExport({
       cwd: path.join(repo, 'packages/api'),
       output,
