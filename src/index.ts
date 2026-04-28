@@ -24,7 +24,7 @@ export {
   resolveSpecifier,
   workspaceVersionSpecifier,
 } from './utils/specifiers.ts';
-export { mangleDirname, relFile } from './utils/paths.ts';
+export { mangleDirname, relativePathWithFileProtocol } from './utils/paths.ts';
 
 export type {
   ConfigOptions,

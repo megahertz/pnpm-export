@@ -1,0 +1,11 @@
+{
+  "name": "optional-app",
+  "optionalDependencies": {
+    "optional-plugin": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "optional-plugin": {
+      "optional": true
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "peer-app",
+  "peerDependencies": {
+    "plugin": "workspace:*",
+    "react": "^19.0.0"
+  }
+}

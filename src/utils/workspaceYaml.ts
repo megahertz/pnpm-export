@@ -26,7 +26,7 @@ function readStringArray(value: unknown, field: string): string[] {
     !value.every((entry) => typeof entry === 'string')
   ) {
     throw new UserError(
-      `pnpm-workspace.yaml field \`${field}\` must be a string array.`,
+      `pnpm-workspace.yaml field \`${field}\` must be a string array`,
     );
   }
   return value;
@@ -39,7 +39,7 @@ function readStringRecord(
   const data = value ?? {};
   if (typeof data !== 'object' || Array.isArray(data)) {
     throw new UserError(
-      `pnpm-workspace.yaml field \`${field}\` must be an object.`,
+      `pnpm-workspace.yaml field \`${field}\` must be an object`,
     );
   }
 
@@ -47,7 +47,7 @@ function readStringRecord(
   for (const [key, entry] of Object.entries(data)) {
     if (typeof entry !== 'string') {
       throw new UserError(
-        `pnpm-workspace.yaml field \`${field}.${key}\` must be a string.`,
+        `pnpm-workspace.yaml field \`${field}.${key}\` must be a string`,
       );
     }
     output[key] = entry;
@@ -59,7 +59,7 @@ function readCatalogs(value: unknown): Record<string, Record<string, string>> {
   const data = value ?? {};
   if (typeof data !== 'object' || Array.isArray(data)) {
     throw new UserError(
-      'pnpm-workspace.yaml field `catalogs` must be an object.',
+      'pnpm-workspace.yaml field `catalogs` must be an object',
     );
   }
 

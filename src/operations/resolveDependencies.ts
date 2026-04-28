@@ -37,7 +37,7 @@ export async function resolveDependencies(app: App): Promise<void> {
 
         if (target === current) {
           throw new UserError(
-            `Package \`${current.name}\` lists itself as a workspace dependency.`,
+            `Package \`${current.name}\` lists itself as a workspace dependency`,
           );
         }
 

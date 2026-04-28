@@ -68,14 +68,14 @@ export class PackageJson {
 
       if (isWorkspaceSpecifier(specifier) && !target) {
         throw new UserError(
-          `Workspace dependency \`${depName}\` in package \`${this.pkg.name}\` was not found in the workspace registry.`,
+          `Workspace dependency \`${depName}\` in package \`${this.pkg.name}\` was not found in the workspace registry`,
         );
       }
 
       if (isWorkspaceSpecifier(specifier) && target) {
         if (target === this.pkg) {
           throw new UserError(
-            `Package \`${this.pkg.name}\` lists itself as a workspace dependency.`,
+            `Package \`${this.pkg.name}\` lists itself as a workspace dependency`,
           );
         }
 
@@ -124,7 +124,7 @@ export class PackageJson {
     const version = workspaceVersionSpecifier(specifier, target);
     if (!version) {
       throw new UserError(
-        `Workspace package \`${target.name}\` needs a version to rewrite \`${specifier}\`, but its manifest has no version field.`,
+        `Workspace package \`${target.name}\` needs a version to rewrite \`${specifier}\`, but its manifest has no version field`,
       );
     }
     return version;

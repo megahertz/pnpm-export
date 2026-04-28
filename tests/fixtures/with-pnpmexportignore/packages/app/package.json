@@ -1,0 +1,6 @@
+{
+  "name": "ignore-app",
+  "dependencies": {
+    "keep-all": "workspace:*"
+  }
+}

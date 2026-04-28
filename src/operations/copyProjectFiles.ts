@@ -52,20 +52,20 @@ function validateOutputLocation(app: App): void {
 
   if (output === workspace.root) {
     throw new UserError(
-      `Output directory \`${output}\` cannot equal workspace root \`${workspace.root}\`.`,
+      `Output directory \`${output}\` cannot equal workspace root \`${workspace.root}\``,
     );
   }
 
   if (isSameOrInside(output, source.dir)) {
     throw new UserError(
-      `Output directory \`${output}\` cannot be inside source dir \`${source.dir}\`.`,
+      `Output directory \`${output}\` cannot be inside source dir \`${source.dir}\``,
     );
   }
 
   const existingPackage = workspace.getByDir(output);
   if (existingPackage) {
     throw new UserError(
-      `Output directory \`${output}\` is an existing workspace package \`${existingPackage.name}\`.`,
+      `Output directory \`${output}\` is an existing workspace package \`${existingPackage.name}\``,
     );
   }
 
@@ -90,7 +90,7 @@ async function prepareOutputDir(app: App): Promise<void> {
       const entries = await listDir(output);
       if (!entries.includes(CLEAN_MARKER)) {
         throw new UserError(
-          `Output directory \`${output}\` is not empty and does not look like a prior pnpm-export output. Refusing to clean it.`,
+          `Output directory \`${output}\` is not empty and does not look like a prior pnpm-export output. Refusing to clean it`,
         );
       }
     }
@@ -101,7 +101,7 @@ async function prepareOutputDir(app: App): Promise<void> {
   await ensureDir(output);
   if (!(await isEmptyDir(output)) && !(await isMarkerOnlyDir(output))) {
     throw new UserError(
-      `Output directory \`${output}\` is non-empty. Re-run with \`--clean\` to wipe it, or pick a different output dir.`,
+      `Output directory \`${output}\` is non-empty. Re-run with \`--clean\` to wipe it, or pick a different output dir`,
     );
   }
 }

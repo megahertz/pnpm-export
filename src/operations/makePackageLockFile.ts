@@ -119,7 +119,7 @@ function buildPackageLock(
     const existing = externalNodePaths.get(entryPath);
     if (existing && existing !== external.snapshotKey) {
       throw new UserError(
-        `Cannot generate package-lock.json because \`${external.name}\` is locked to multiple versions. Pass --no-lockfile to skip lockfile generation.`,
+        `Cannot generate package-lock.json because \`${external.name}\` is locked to multiple versions. Pass --no-lockfile to skip lockfile generation`,
       );
     }
     externalNodePaths.set(entryPath, external.snapshotKey);
@@ -142,7 +142,7 @@ function buildPackageLock(
 function collectManifestMap(app: App): Map<WorkspacePackage, PackageJsonData> {
   const { packageJsons } = app;
   if (!packageJsons) {
-    throw new InternalError('Package manifests have not been rewritten.');
+    throw new InternalError('Package manifests have not been rewritten');
   }
 
   const manifests = new Map<WorkspacePackage, PackageJsonData>();
@@ -178,7 +178,7 @@ function processWorkspacePackage(
   const manifest = requireManifest(context, pkg);
   const flags = context.workspaceStates.get(pkg);
   if (!flags) {
-    throw new InternalError(`No lockfile state for package ${pkg.name}.`);
+    throw new InternalError(`No lockfile state for package ${pkg.name}`);
   }
 
   for (const field of LOCK_DEP_FIELDS) {
@@ -212,7 +212,7 @@ function processWorkspacePackage(
   }
 
   if (!exported.has(pkg)) {
-    throw new InternalError(`Package ${pkg.name} is not in the export set.`);
+    throw new InternalError(`Package ${pkg.name} is not in the export set`);
   }
 }
 
@@ -273,7 +273,7 @@ function markExternal(
 
   if (existing.name !== name) {
     throw new UserError(
-      `Cannot generate package-lock.json because pnpm-lock.yaml maps \`${name}\` and \`${existing.name}\` to the same package key \`${snapshotKey}\`. Pass --no-lockfile to skip lockfile generation.`,
+      `Cannot generate package-lock.json because pnpm-lock.yaml maps \`${name}\` and \`${existing.name}\` to the same package key \`${snapshotKey}\`. Pass --no-lockfile to skip lockfile generation`,
     );
   }
 
@@ -346,7 +346,7 @@ function resolveDirectSnapshotKey(
     ? 'does not contain'
     : 'was not found, so it cannot lock';
   throw new UserError(
-    `Cannot generate package-lock.json because pnpm-lock.yaml ${lockfileHint} dependency \`${depName}\` (${specifier}) for package \`${pkg.name}\`. Run \`pnpm install\` or pass \`--no-lockfile\`.`,
+    `Cannot generate package-lock.json because pnpm-lock.yaml ${lockfileHint} dependency \`${depName}\` (${specifier}) for package \`${pkg.name}\`. Run \`pnpm install\` or pass \`--no-lockfile\``,
   );
 }
 
@@ -443,7 +443,7 @@ function collectLinkEntries(
         const existing = links.get(key);
         if (existing && existing.resolved !== entry.resolved) {
           throw new UserError(
-            `Cannot generate package-lock.json because local dependency \`${depName}\` resolves to both \`${existing.resolved}\` and \`${entry.resolved}\`. Pass --no-lockfile to skip lockfile generation.`,
+            `Cannot generate package-lock.json because local dependency \`${depName}\` resolves to both \`${existing.resolved}\` and \`${entry.resolved}\`. Pass --no-lockfile to skip lockfile generation`,
           );
         }
         links.set(key, entry);
@@ -597,7 +597,7 @@ function requireManifest(
 ): PackageJsonData {
   const manifest = context.manifests.get(pkg);
   if (!manifest) {
-    throw new InternalError(`No rewritten manifest for package ${pkg.name}.`);
+    throw new InternalError(`No rewritten manifest for package ${pkg.name}`);
   }
   return manifest;
 }
@@ -702,7 +702,7 @@ function parsePnpmPackageKey(key: string): { name: string; version: string } {
   }
 
   throw new UserError(
-    `Cannot generate package-lock.json because pnpm-lock.yaml has unsupported package key \`${key}\`. Pass --no-lockfile to skip lockfile generation.`,
+    `Cannot generate package-lock.json because pnpm-lock.yaml has unsupported package key \`${key}\`. Pass --no-lockfile to skip lockfile generation`,
   );
 }
 

@@ -1,0 +1,12 @@
+{
+  "name": "catalog-app",
+  "dependencies": {
+    "lodash": "catalog:",
+    "react": "catalog:strict"
+  },
+  "pnpm": {
+    "catalog": {
+      "react": "^18.0.0"
+    }
+  }
+}

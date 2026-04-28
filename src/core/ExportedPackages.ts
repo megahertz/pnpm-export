@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { relFile } from '../utils/paths.ts';
+import { relativePathWithFileProtocol } from '../utils/paths.ts';
 import { WorkspacePackage } from './WorkspacePackage.ts';
 
 export class ExportedPackages {
@@ -33,12 +33,13 @@ export class ExportedPackages {
     if (pkg === this.root) {
       return this.output;
     }
+
     return path.join(this.output, 'packages', pkg.dirname);
   }
 
   relativeFileSpecifier(from: WorkspacePackage, to: WorkspacePackage): string {
     const fromDir = this.outputPathFor(from);
     const toDir = this.outputPathFor(to);
-    return relFile(fromDir, toDir);
+    return relativePathWithFileProtocol(fromDir, toDir);
   }
 }

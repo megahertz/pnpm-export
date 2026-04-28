@@ -52,26 +52,26 @@ export class Workspace {
 
     if (!catalog) {
       throw new UserError(
-        `Catalog \`${catalogName ?? 'default'}\` was not found for dependency \`${depName}\`.`,
+        `Catalog \`${catalogName ?? 'default'}\` was not found for dependency \`${depName}\``,
       );
     }
 
     const resolved = catalog[depName];
     if (!resolved) {
       throw new UserError(
-        `Catalog \`${catalogName ?? 'default'}\` has no entry for dependency \`${depName}\`.`,
+        `Catalog \`${catalogName ?? 'default'}\` has no entry for dependency \`${depName}\``,
       );
     }
 
     if (resolved.startsWith('workspace:')) {
       throw new UserError(
-        `Catalog entry for \`${depName}\` resolves to workspace specifier \`${resolved}\`, which is not supported.`,
+        `Catalog entry for \`${depName}\` resolves to workspace specifier \`${resolved}\`, which is not supported`,
       );
     }
 
     if (resolved.startsWith('catalog:')) {
       throw new UserError(
-        `Catalog entry for \`${depName}\` resolves to another catalog specifier \`${resolved}\`, which is not supported.`,
+        `Catalog entry for \`${depName}\` resolves to another catalog specifier \`${resolved}\`, which is not supported`,
       );
     }
 

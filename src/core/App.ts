@@ -23,21 +23,21 @@ export class App {
 
   requireWorkspace(): Workspace {
     if (!this.workspace) {
-      throw new InternalError('Workspace has not been read.');
+      throw new InternalError('Workspace has not been read');
     }
     return this.workspace;
   }
 
   requireSourcePackage(): WorkspacePackage {
     if (!this.sourcePackage) {
-      throw new InternalError('Source package has not been read.');
+      throw new InternalError('Source package has not been read');
     }
     return this.sourcePackage;
   }
 
   requireExported(): ExportedPackages {
     if (!this.exported) {
-      throw new InternalError('Dependencies have not been resolved.');
+      throw new InternalError('Dependencies have not been resolved');
     }
     return this.exported;
   }

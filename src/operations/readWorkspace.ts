@@ -16,27 +16,27 @@ export async function readWorkspace(app: App): Promise<void> {
   const workspaceRoot = await findWorkspaceRoot(app.config.cwd);
   if (!workspaceRoot) {
     throw new UserError(
-      `No pnpm-workspace.yaml found in \`${app.config.cwd}\` or any parent. pnpm-export only supports pnpm workspaces. For a single-package project, use \`npm pack\` instead.`,
+      `No pnpm-workspace.yaml found in \`${app.config.cwd}\` or any parent. pnpm-export only supports pnpm workspaces. For a single-package project, use \`npm pack\` instead`,
     );
   }
 
   if (!isSameOrInside(app.config.cwd, workspaceRoot)) {
     throw new UserError(
-      `Source dir \`${app.config.cwd}\` is not inside workspace \`${workspaceRoot}\`.`,
+      `Source dir \`${app.config.cwd}\` is not inside workspace \`${workspaceRoot}\``,
     );
   }
 
   const sourceManifestPath = path.join(app.config.cwd, 'package.json');
   if (!(await pathExists(sourceManifestPath))) {
     throw new UserError(
-      `\`${app.config.cwd}/package.json\` not found. --cwd must point to a directory containing a package.json.`,
+      `\`${app.config.cwd}/package.json\` not found. --cwd must point to a directory containing a package.json`,
     );
   }
 
   const sourceManifest = await readJson<PackageJsonData>(sourceManifestPath);
   if (!sourceManifest.name) {
     throw new UserError(
-      `Source package at \`${app.config.cwd}\` has no \`name\` field; pnpm-export requires a name.`,
+      `Source package at \`${app.config.cwd}\` has no \`name\` field; pnpm-export requires a name`,
     );
   }
 
@@ -119,7 +119,7 @@ async function enumerateWorkspacePackages(
     const existing = packages.get(pkg.name);
     if (existing) {
       throw new UserError(
-        `Duplicate workspace package name \`${pkg.name}\` at \`${existing.dir}\` and \`${pkg.dir}\`.`,
+        `Duplicate workspace package name \`${pkg.name}\` at \`${existing.dir}\` and \`${pkg.dir}\``,
       );
     }
     packages.set(pkg.name, pkg);

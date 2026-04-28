@@ -1,0 +1,48 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  packages/api:
+    dependencies:
+      shared:
+        specifier: workspace:*
+        version: link:../shared
+      zod:
+        specifier: 'catalog:'
+        version: 4.0.0
+    devDependencies:
+      dev-config:
+        specifier: workspace:*
+        version: link:../dev-config
+      eslint:
+        specifier: ^9.0.0
+        version: 9.0.0
+
+  packages/shared:
+    dependencies:
+      lib:
+        specifier: workspace:^
+        version: link:../lib
+
+packages:
+
+  eslint@9.0.0:
+    resolution:
+      integrity: sha512-eslint-fixture
+    engines:
+      node: ^18.18.0 || ^20.9.0 || >=21.1.0
+    hasBin: true
+
+  zod@4.0.0:
+    resolution:
+      integrity: sha512-zod-fixture
+
+snapshots:
+
+  eslint@9.0.0: {}
+
+  zod@4.0.0: {}

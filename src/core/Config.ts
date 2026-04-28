@@ -33,7 +33,7 @@ export class Config {
     const output = typeof opts.output === 'string' ? opts.output : undefined;
 
     if (!output) {
-      throw new UserError('--output <dir> is required.');
+      throw new UserError('--output <dir> is required');
     }
 
     this.cwd = path.resolve(invocationCwd, cwd);
@@ -52,13 +52,13 @@ export class Config {
 
     if (!PATCH_MODES.has(this.patchDependencies)) {
       throw new UserError(
-        `--patch-dependencies must be one of: ${[...PATCH_MODES].join(', ')}.`,
+        `--patch-dependencies must be one of: ${[...PATCH_MODES].join(', ')}`,
       );
     }
 
     const cwdStat = safeStat(this.cwd);
     if (!cwdStat?.isDirectory()) {
-      throw new UserError(`Source dir \`${this.cwd}\` does not exist.`);
+      throw new UserError(`Source dir \`${this.cwd}\` does not exist`);
     }
 
     Object.freeze(this);
@@ -72,6 +72,7 @@ function safeStat(filePath: string): fs.Stats | undefined {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return undefined;
     }
+
     throw error;
   }
 }
