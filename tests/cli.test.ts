@@ -9,7 +9,7 @@ const execFileAsync = promisify(execFile);
 
 describe('cli', () => {
   beforeAll(async () => {
-    await execFileAsync('pnpm', ['run', 'build']);
+    await execFileAsync('pnpm', ['run', 'build'], { shell: true });
   });
 
   it('prints full help and exits with an error when required args are missing', async () => {
