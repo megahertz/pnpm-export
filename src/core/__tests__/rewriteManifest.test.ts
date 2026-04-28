@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
+import { modifyOnePackageJson } from '../../operations/modifyPackageJson/modifyOnePackageJson.ts';
 import { Config } from '../Config.ts';
 import { ExportedPackages } from '../ExportedPackages.ts';
-import { PackageJson } from '../PackageJson.ts';
 import type { Logger } from '../types.ts';
 import { Workspace } from '../Workspace.ts';
 import { WorkspacePackage } from '../WorkspacePackage.ts';
 
-describe('PackageJson', () => {
+describe('modifyOnePackageJson', () => {
   it('rewrites workspace and catalog deps without mutating the source manifest', () => {
     const root = new WorkspacePackage({
       dir: '/repo/packages/app',
@@ -34,8 +34,7 @@ describe('PackageJson', () => {
       output: '/out',
     });
 
-    const result = new PackageJson({
-      pkg: root,
+    const result = modifyOnePackageJson(root, {
       workspace,
       exported,
       config: new Config({ options: { cwd: process.cwd(), output: '/out' } }),

@@ -14,7 +14,7 @@
   },
   "packageManager": "pnpm@10.33.1",
   "scripts": {
-    "build": "tsgo --noEmit false",
+    "build": "tsgo -p tsconfig.build.json",
     "docs:flags": "node scripts/update-readme-flags.mjs",
     "format": "oxfmt && oxlint --fix",
     "start": "pnpm run build && node dist/cli.js",

@@ -27,7 +27,7 @@ Usage: pnpm-export [options]
 Export one package from a pnpm workspace for npm install.
 
 Options:
-  -V, --version                output the version number
+  -v, --version                output the version number
   -C, --cwd <dir>              source package directory
   -o, --output <dir>           output directory
   -D, --dev-dependencies       include workspace dev deps in closure (default:
@@ -46,7 +46,7 @@ Options:
   --no-lockfile                do not emit package-lock.json
   --dry-run                    print planned actions without writing (default:
                                false)
-  -v, --verbose                debug logging (default: false)
+  --silent                     suppress non-error output (default: false)
   -h, --help                   display help for command
 ```
 

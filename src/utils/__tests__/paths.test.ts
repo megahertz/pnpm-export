@@ -11,9 +11,11 @@ describe('path helpers', () => {
     expect(relativePathWithFileProtocol('/out', '/out/packages/shared')).toBe(
       'file:./packages/shared',
     );
-    expect(relativePathWithFileProtocol('/out/packages/shared', '/out/packages/lib')).toBe(
-      'file:../lib',
+    expect(
+      relativePathWithFileProtocol('/out/packages/shared', '/out/packages/lib'),
+    ).toBe('file:../lib');
+    expect(relativePathWithFileProtocol('/out/packages/shared', '/out')).toBe(
+      'file:../..',
     );
-    expect(relativePathWithFileProtocol('/out/packages/shared', '/out')).toBe('file:../..');
   });
 });

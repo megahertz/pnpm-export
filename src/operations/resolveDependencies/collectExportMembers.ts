@@ -1,15 +1,14 @@
-import type { App } from '../core/App.ts';
-import { UserError } from '../core/errors.ts';
-import { ExportedPackages } from '../core/ExportedPackages.ts';
-import type { DependencyMap } from '../core/types.ts';
-import type { WorkspacePackage } from '../core/WorkspacePackage.ts';
+import type { App } from '../../core/App.ts';
+import { UserError } from '../../core/errors.ts';
+import type { WorkspacePackage } from '../../core/WorkspacePackage.ts';
 import {
   DEP_FIELDS,
   isWorkspaceSpecifier,
   shouldFollowField,
-} from '../utils/specifiers.ts';
+} from '../../utils/specifiers.ts';
+import { readDependencyMap } from './internals.ts';
 
-export async function resolveDependencies(app: App): Promise<void> {
+export function collectExportMembers(app: App): Set<WorkspacePackage> {
   const workspace = app.requireWorkspace();
   const root = app.requireSourcePackage();
   const members = new Set<WorkspacePackage>();
@@ -54,23 +53,5 @@ export async function resolveDependencies(app: App): Promise<void> {
     }
   }
 
-  app.exported = new ExportedPackages({
-    root,
-    members,
-    output: app.config.output,
-  });
-}
-
-function readDependencyMap(value: unknown): DependencyMap {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) {
-    return {};
-  }
-
-  const output: DependencyMap = {};
-  for (const [key, entry] of Object.entries(value)) {
-    if (typeof entry === 'string') {
-      output[key] = entry;
-    }
-  }
-  return output;
+  return members;
 }

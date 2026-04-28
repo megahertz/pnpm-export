@@ -19,7 +19,10 @@ export function isSameOrInside(child: string, parent: string): boolean {
   );
 }
 
-export function relativePathWithFileProtocol(fromDir: string, toDir: string): string {
+export function relativePathWithFileProtocol(
+  fromDir: string,
+  toDir: string,
+): string {
   const relative = toPosixPath(path.relative(fromDir, toDir));
   if (relative === '') {
     return 'file:.';

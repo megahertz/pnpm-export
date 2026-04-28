@@ -103,7 +103,7 @@ export interface ConfigOptions {
   clean?: boolean;
   lockfile?: boolean;
   dryRun?: boolean;
-  verbose?: boolean;
+  silent?: boolean;
   patchDependencies?: PatchDependenciesMode;
 }
 

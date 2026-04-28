@@ -4,18 +4,24 @@ import type { Logger } from '../core/types.ts';
 export class ConsoleLogger implements Logger {
   #warningCount = 0;
 
-  constructor(private readonly verboseEnabled = false) {}
+  constructor(private readonly silent = false) {}
 
   get warningCount(): number {
     return this.#warningCount;
   }
 
   info(message: string): void {
+    if (this.silent) {
+      return;
+    }
     fs.writeSync(process.stdout.fd, `${message}\n`);
   }
 
   warn(message: string): void {
     this.#warningCount += 1;
+    if (this.silent) {
+      return;
+    }
     console.error(message);
   }
 
@@ -24,8 +30,9 @@ export class ConsoleLogger implements Logger {
   }
 
   debug(message: string): void {
-    if (this.verboseEnabled) {
-      console.error(message);
+    if (this.silent) {
+      return;
     }
+    console.error(message);
   }
 }

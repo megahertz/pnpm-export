@@ -7,8 +7,8 @@ import { Config } from '../../core/Config.ts';
 import type { Dependencies, Logger } from '../../core/types.ts';
 import { Workspace } from '../../core/Workspace.ts';
 import { WorkspacePackage } from '../../core/WorkspacePackage.ts';
-import { findWorkspaceRoot } from '../readWorkspace.ts';
-import { resolveDependencies } from '../resolveDependencies.ts';
+import { findWorkspaceRoot } from '../readWorkspace/index.ts';
+import { resolveDependencies } from '../resolveDependencies/index.ts';
 
 describe('resolveDependencies', () => {
   it('walks transitive workspace deps and handles cycles', async () => {

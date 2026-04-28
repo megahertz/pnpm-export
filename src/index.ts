@@ -8,11 +8,11 @@ export { PackageJson } from './core/PackageJson.ts';
 export {
   readWorkspace,
   findWorkspaceRoot,
-} from './operations/readWorkspace.ts';
-export { resolveDependencies } from './operations/resolveDependencies.ts';
-export { copyProjectFiles } from './operations/copyProjectFiles.ts';
-export { modifyPackageJson } from './operations/modifyPackageJson.ts';
-export { makePackageLockFile } from './operations/makePackageLockFile.ts';
+} from './operations/readWorkspace/index.ts';
+export { resolveDependencies } from './operations/resolveDependencies/index.ts';
+export { copyProjectFiles } from './operations/copyProjectFiles/index.ts';
+export { modifyPackageJson } from './operations/modifyPackageJson/index.ts';
+export { makePackageLockFile } from './operations/makePackageLockFile/index.ts';
 
 export { makeDependencies } from './core/makeDependencies.ts';
 export { UserError, InternalError } from './core/errors.ts';

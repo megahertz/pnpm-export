@@ -16,7 +16,7 @@ const packageJson = require('../package.json') as { version: string };
 const program = new Command()
   .name('pnpm-export')
   .description('Export one package from a pnpm workspace for npm install.')
-  .version(packageJson.version)
+  .version(packageJson.version, '-v, --version', 'output the version number')
   .showHelpAfterError()
   .configureOutput({
     writeErr: (value: string) => {
@@ -71,7 +71,7 @@ const program = new Command()
   .option('--clean', 'wipe output directory contents before writing', false)
   .option('--no-lockfile', 'do not emit package-lock.json')
   .option('--dry-run', 'print planned actions without writing', false)
-  .option('-v, --verbose', 'debug logging', false);
+  .option('--silent', 'suppress non-error output', false);
 
 program.parse();
 

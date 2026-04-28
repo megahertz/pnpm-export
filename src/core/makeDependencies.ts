@@ -5,6 +5,6 @@ import type { Dependencies } from './types.ts';
 export function makeDependencies({ config }: { config: Config }): Dependencies {
   return {
     config,
-    logger: new ConsoleLogger(config.verbose),
+    logger: new ConsoleLogger(config.silent),
   };
 }

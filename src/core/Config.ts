@@ -18,7 +18,7 @@ export class Config {
   readonly clean: boolean;
   readonly lockfile: boolean;
   readonly dryRun: boolean;
-  readonly verbose: boolean;
+  readonly silent: boolean;
   readonly patchDependencies: PatchDependenciesMode;
 
   constructor({
@@ -44,7 +44,7 @@ export class Config {
     this.clean = Boolean(opts.clean);
     this.lockfile = opts.lockfile !== false;
     this.dryRun = Boolean(opts.dryRun);
-    this.verbose = Boolean(opts.verbose);
+    this.silent = Boolean(opts.silent);
     this.patchDependencies =
       typeof opts.patchDependencies === 'string'
         ? opts.patchDependencies
