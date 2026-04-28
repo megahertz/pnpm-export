@@ -9,8 +9,8 @@ export class PackageJson {
     pkg,
     data,
   }: {
-    pkg: WorkspacePackage;
     data?: PackageJsonData;
+    pkg: WorkspacePackage;
   }) {
     this.pkg = pkg;
     this.data = data ?? structuredClone(pkg.manifest);

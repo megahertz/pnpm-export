@@ -55,8 +55,8 @@ export function shouldFollowField(
   field: DepKind,
   flags: {
     includeDevDependencies: boolean;
-    includePeerDependencies: boolean;
     includeOptionalDependencies: boolean;
+    includePeerDependencies: boolean;
   },
 ): boolean {
   if (field === 'dependencies') {

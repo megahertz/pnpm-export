@@ -11,5 +11,5 @@ export function buildPackageJsons(app: App): void {
   for (const pkg of exported.all()) {
     packageJsons.set(pkg, modifyOnePackageJson(pkg, ctx));
   }
-  app.packageJsons = packageJsons;
+  app.setPackageJsons(packageJsons);
 }

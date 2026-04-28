@@ -21,12 +21,7 @@ export class Config {
   readonly silent: boolean;
   readonly patchDependencies: PatchDependenciesMode;
 
-  constructor({
-    options,
-  }: {
-    options?: ConfigOptions & Record<string, unknown>;
-    args?: string[];
-  }) {
+  constructor({ options }: { args?: string[]; options?: ConfigOptions }) {
     const opts = options ?? {};
     const invocationCwd = process.cwd();
     const cwd = typeof opts.cwd === 'string' ? opts.cwd : invocationCwd;

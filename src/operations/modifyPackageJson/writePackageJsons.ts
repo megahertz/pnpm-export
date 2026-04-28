@@ -8,7 +8,7 @@ export async function writePackageJsons(app: App): Promise<void> {
   }
 
   const exported = app.requireExported();
-  const packageJsons = app.packageJsons!;
+  const packageJsons = app.requirePackageJsons();
   await Promise.all(
     [...packageJsons.entries()].map(([pkg, packageJson]) =>
       writeJson(

@@ -2,6 +2,6 @@
   "extends": "@megahertz/oxconfig/tsconfig",
   "compilerOptions": {
     "allowImportingTsExtensions": true,
-    "rewriteRelativeImportExtensions": true,
-  },
+    "rewriteRelativeImportExtensions": true
+  }
 }

@@ -9,9 +9,9 @@ export async function copyPatchFiles({
   rootManifest,
   output,
 }: {
-  workspace: Workspace;
-  rootManifest: PackageJsonData;
   output: string;
+  rootManifest: PackageJsonData;
+  workspace: Workspace;
 }): Promise<number> {
   const patches = collectPatches(rootManifest, workspace);
   const entries = Object.entries(patches);

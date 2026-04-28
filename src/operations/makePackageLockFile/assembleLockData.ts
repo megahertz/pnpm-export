@@ -1,8 +1,5 @@
 import { UserError } from '../../core/errors.ts';
-import type {
-  PackageLockData,
-  PackageLockPackage,
-} from '../../core/types.ts';
+import type { PackageLockData, PackageLockPackage } from '../../core/types.ts';
 import { externalPackageEntry } from './externalEntries.ts';
 import {
   type LockContext,

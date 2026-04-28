@@ -20,11 +20,13 @@ export async function loadWorkspace(app: App): Promise<void> {
     workspaceRoot,
     workspaceYaml.packages,
   );
-  app.workspace = new Workspace({
-    root: workspaceRoot,
-    data: workspaceYaml,
-    packages,
-  });
+  app.setWorkspace(
+    new Workspace({
+      root: workspaceRoot,
+      data: workspaceYaml,
+      packages,
+    }),
+  );
 }
 
 async function locateWorkspaceRoot(app: App): Promise<string> {

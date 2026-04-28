@@ -21,6 +21,26 @@ export class App {
     this.logger = deps.logger;
   }
 
+  setWorkspace(workspace: Workspace): void {
+    this.workspace = workspace;
+  }
+
+  setSourcePackage(sourcePackage: WorkspacePackage): void {
+    this.sourcePackage = sourcePackage;
+  }
+
+  setExportedPackages(exported: ExportedPackages): void {
+    this.exported = exported;
+  }
+
+  setPackageJsons(packageJsons: Map<WorkspacePackage, PackageJson>): void {
+    this.packageJsons = packageJsons;
+  }
+
+  setPlannedFileCount(plannedFileCount: number): void {
+    this.plannedFileCount = plannedFileCount;
+  }
+
   requireWorkspace(): Workspace {
     if (!this.workspace) {
       throw new InternalError('Workspace has not been read');
@@ -40,5 +60,12 @@ export class App {
       throw new InternalError('Dependencies have not been resolved');
     }
     return this.exported;
+  }
+
+  requirePackageJsons(): Map<WorkspacePackage, PackageJson> {
+    if (!this.packageJsons) {
+      throw new InternalError('Package manifests have not been rewritten');
+    }
+    return this.packageJsons;
   }
 }

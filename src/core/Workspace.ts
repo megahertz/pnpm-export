@@ -17,9 +17,9 @@ export class Workspace {
     data,
     packages,
   }: {
-    root: string;
     data: WorkspaceYaml;
     packages: Map<string, WorkspacePackage>;
+    root: string;
   }) {
     this.root = root;
     this.packagePatterns = data.packages;
@@ -30,11 +30,11 @@ export class Workspace {
     this.packages = packages;
   }
 
-  getByName(name: string): WorkspacePackage | undefined {
+  getByName(name: string): undefined | WorkspacePackage {
     return this.packages.get(name);
   }
 
-  getByDir(dir: string): WorkspacePackage | undefined {
+  getByDir(dir: string): undefined | WorkspacePackage {
     const normalized = path.resolve(dir);
     for (const pkg of this.packages.values()) {
       if (pkg.dir === normalized) {

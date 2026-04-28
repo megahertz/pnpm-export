@@ -12,9 +12,9 @@ export class ExportedPackages {
     members,
     output,
   }: {
-    root: WorkspacePackage;
     members: Iterable<WorkspacePackage>;
     output: string;
+    root: WorkspacePackage;
   }) {
     this.root = root;
     this.members = new Set(members);

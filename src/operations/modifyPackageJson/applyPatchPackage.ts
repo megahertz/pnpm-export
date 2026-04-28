@@ -1,7 +1,7 @@
 import type { PackageJson } from '../../core/PackageJson.ts';
 import {
-  type ModifyContext,
   collectPatches,
+  type ModifyContext,
   readDependencyMap,
 } from './internals.ts';
 

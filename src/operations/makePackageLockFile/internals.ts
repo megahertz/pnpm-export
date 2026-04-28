@@ -20,13 +20,8 @@ export const LOCK_DEP_FIELDS: DepKind[] = [
 export function collectManifestMap(
   app: App,
 ): Map<WorkspacePackage, PackageJsonData> {
-  const { packageJsons } = app;
-  if (!packageJsons) {
-    throw new InternalError('Package manifests have not been rewritten');
-  }
-
   const manifests = new Map<WorkspacePackage, PackageJsonData>();
-  for (const [pkg, packageJson] of packageJsons) {
+  for (const [pkg, packageJson] of app.requirePackageJsons()) {
     manifests.set(pkg, packageJson.toJSON());
   }
   return manifests;
@@ -70,7 +65,7 @@ export function resolveLocalFileTarget(
   from: WorkspacePackage,
   depName: string,
   specifier: string,
-): WorkspacePackage | undefined {
+): undefined | WorkspacePackage {
   if (!isFileSpecifier(specifier)) {
     return undefined;
   }
@@ -143,17 +138,17 @@ export interface LockFlags {
 }
 
 export interface ExternalState {
+  flags: LockFlags;
   name: string;
   snapshotKey: string;
-  flags: LockFlags;
 }
 
 export interface LockContext {
   app: App;
-  pnpmLock?: PnpmLock;
-  manifests: Map<WorkspacePackage, PackageJsonData>;
-  workspaceStates: Map<WorkspacePackage, LockFlags>;
-  externalStates: Map<string, ExternalState>;
-  workspaceQueue: WorkspacePackage[];
   externalQueue: ExternalState[];
+  externalStates: Map<string, ExternalState>;
+  manifests: Map<WorkspacePackage, PackageJsonData>;
+  pnpmLock?: PnpmLock;
+  workspaceQueue: WorkspacePackage[];
+  workspaceStates: Map<WorkspacePackage, LockFlags>;
 }

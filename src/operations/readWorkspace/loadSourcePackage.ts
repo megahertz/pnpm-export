@@ -9,9 +9,10 @@ import { readJson } from '../../utils/json.ts';
 export async function loadSourcePackage(app: App): Promise<void> {
   const sourceManifest = await readSourceManifest(app);
   const workspace = app.requireWorkspace();
-  app.sourcePackage =
+  const sourcePackage =
     workspace.getByDir(app.config.cwd) ??
     new WorkspacePackage({ dir: app.config.cwd, manifest: sourceManifest });
+  app.setSourcePackage(sourcePackage);
 }
 
 async function readSourceManifest(app: App): Promise<PackageJsonData> {

@@ -16,7 +16,11 @@ export function collectExportMembers(app: App): Set<WorkspacePackage> {
   const queue: WorkspacePackage[] = [root];
 
   while (queue.length > 0) {
-    const current = queue.shift()!;
+    const current = queue.shift();
+    if (!current) {
+      continue;
+    }
+
     for (const field of DEP_FIELDS) {
       if (!shouldFollowField(field, app.config)) {
         continue;

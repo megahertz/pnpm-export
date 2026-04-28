@@ -25,5 +25,5 @@ export async function printDryRunTree(app: App): Promise<void> {
     }
   }
 
-  app.plannedFileCount = totalFiles;
+  app.setPlannedFileCount(totalFiles);
 }

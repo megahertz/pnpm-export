@@ -9,9 +9,9 @@ import {
   workspaceVersionSpecifier,
 } from '../../utils/specifiers.ts';
 import {
-  type RewriteContext,
   readDependencyMap,
   resolveWorkspaceTarget,
+  type RewriteContext,
 } from './internals.ts';
 
 export function rewriteDeps(
@@ -63,11 +63,6 @@ function rewriteDepField(
 
   if (field === 'devDependencies') {
     data.devDependencies = rewritten;
-    return;
-  }
-
-  if (Object.keys(rewritten).length === 0 && data[field] === undefined) {
-    delete data[field];
     return;
   }
 

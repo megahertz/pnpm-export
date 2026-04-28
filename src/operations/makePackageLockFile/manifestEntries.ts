@@ -1,10 +1,10 @@
 import type {
+  DependencyMap,
   DepKind,
   PackageJsonData,
   PackageLockPackage,
-  DependencyMap,
 } from '../../core/types.ts';
-import { readDependencyMap, type LockFlags } from './internals.ts';
+import { type LockFlags, readDependencyMap } from './internals.ts';
 
 export function manifestPackageEntry(
   manifest: PackageJsonData,
@@ -12,8 +12,8 @@ export function manifestPackageEntry(
     includeName,
     flags,
   }: {
-    includeName: boolean;
     flags: LockFlags;
+    includeName: boolean;
   },
 ): PackageLockPackage {
   const entry: PackageLockPackage = {};
@@ -48,8 +48,10 @@ export function copyDependencyMap(
   value: DependencyMap | undefined,
 ): void {
   if (value && Object.keys(value).length > 0) {
+    // eslint-disable-next-line no-param-reassign -- Lock entry builders intentionally fill a caller-owned entry.
     entry[field] = value;
   } else if (value && field === 'devDependencies') {
+    // eslint-disable-next-line no-param-reassign -- Lock entry builders intentionally fill a caller-owned entry.
     entry.devDependencies = {};
   }
 }
@@ -59,10 +61,13 @@ export function applyPackageFlags(
   flags: LockFlags,
 ): void {
   if (flags.dev && flags.optional) {
+    // eslint-disable-next-line no-param-reassign -- Lock entry builders intentionally fill a caller-owned entry.
     entry.devOptional = true;
   } else if (flags.dev) {
+    // eslint-disable-next-line no-param-reassign -- Lock entry builders intentionally fill a caller-owned entry.
     entry.dev = true;
   } else if (flags.optional) {
+    // eslint-disable-next-line no-param-reassign -- Lock entry builders intentionally fill a caller-owned entry.
     entry.optional = true;
   }
 }
@@ -89,10 +94,11 @@ function copyDependencyField(
 function copyObjectField(
   entry: PackageLockPackage,
   manifest: PackageJsonData,
-  field: 'peerDependenciesMeta' | 'optionalDependenciesMeta',
+  field: 'optionalDependenciesMeta' | 'peerDependenciesMeta',
 ): void {
   const value = manifest[field];
   if (value && typeof value === 'object' && !Array.isArray(value)) {
-    entry[field] = value;
+    // eslint-disable-next-line no-param-reassign -- Lock entry builders intentionally fill a caller-owned entry.
+    entry[field] = value as Record<string, unknown>;
   }
 }

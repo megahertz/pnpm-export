@@ -6,9 +6,11 @@ export function assignExportedPackages(
   app: App,
   members: Set<WorkspacePackage>,
 ): void {
-  app.exported = new ExportedPackages({
-    root: app.requireSourcePackage(),
-    members,
-    output: app.config.output,
-  });
+  app.setExportedPackages(
+    new ExportedPackages({
+      root: app.requireSourcePackage(),
+      members,
+      output: app.config.output,
+    }),
+  );
 }

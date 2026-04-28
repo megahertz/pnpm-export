@@ -1,7 +1,11 @@
 import path from 'node:path';
 import type { App } from '../../core/App.ts';
 import { UserError } from '../../core/errors.ts';
-import { dirnameMatchesPattern, isSameOrInside, toPosixPath } from '../../utils/paths.ts';
+import {
+  dirnameMatchesPattern,
+  isSameOrInside,
+  toPosixPath,
+} from '../../utils/paths.ts';
 
 export function validateOutputLocation(app: App): void {
   const workspace = app.requireWorkspace();

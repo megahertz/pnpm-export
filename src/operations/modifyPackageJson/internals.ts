@@ -33,21 +33,21 @@ export function collectPatches(
 }
 
 export interface ModifyContext {
-  workspace: Workspace;
-  exported: ExportedPackages;
   config: Config;
+  exported: ExportedPackages;
   logger: Logger;
+  workspace: Workspace;
 }
 
 export interface RewriteContext {
-  workspace: Workspace;
   exported: ExportedPackages;
+  workspace: Workspace;
 }
 
 export function resolveWorkspaceTarget(
   depName: string,
   ctx: RewriteContext,
-): WorkspacePackage | undefined {
+): undefined | WorkspacePackage {
   if (depName === ctx.exported.root.name) {
     return ctx.exported.root;
   }
